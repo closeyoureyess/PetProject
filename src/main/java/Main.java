@@ -1,5 +1,5 @@
 import genclasses.FilesService;
-import mapper.ListMapper;
+import mapper.LinesMapper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +12,7 @@ public class Main {
         String userText;
         Scanner scanner = new Scanner(System.in);
         FilesService operationsFiles = new FilesService();
-        ListMapper listMapper = new ListMapper();
+        LinesMapper listMapper = new LinesMapper();
 
         //Прочитать файл, после указания пути к нему в консоли
         System.out.println("Укажите путь файла, который нужно прочитать");

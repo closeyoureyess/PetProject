@@ -3,7 +3,7 @@ package mapper;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ListMapper {
+public class LinesMapper {
 
     public List<StringBuffer> stringToStringBuffer(List<String> listString) {
         List<StringBuffer> newStringBuffersList = new LinkedList<>();
@@ -19,5 +19,9 @@ public class ListMapper {
             newStringList.add(String.valueOf(listStringBuffer.get(i)));
         }
         return newStringList;
+    }
+
+    public Integer stringBufferToInteger(StringBuffer stringBuffer){
+        return Integer.valueOf(stringBuffer.toString());
     }
 }

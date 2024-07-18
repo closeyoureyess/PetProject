@@ -6,6 +6,8 @@ public interface GeneralOperations {
     List<?> cReadFiles(String s);
     List<List<?>> filterFile(List<String> alreadyReadLines);
 
+    List<List<?>> createNewFile(List<String> alreadyReadLines);
+
     default boolean s() { // Статистика краткая
         return false;
     }
