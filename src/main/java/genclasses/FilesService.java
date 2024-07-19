@@ -7,6 +7,7 @@ import lombok.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -17,7 +18,7 @@ import java.util.*;
 public class FilesService implements GeneralOperations, CheckErrors {
 
     private Files files;
-    private AuxiliaryActions otherMethods = new AuxiliaryActions();
+    private AuxiliaryActions auxiliaryActions = new AuxiliaryActions();
 
     @Override
     public List<String> cReadFiles(String way) {
@@ -31,11 +32,12 @@ public class FilesService implements GeneralOperations, CheckErrors {
             return null;
         }
         List<String> listText;
+        Path path = Paths.get(way.trim());
         try {
-            listText = Files.readAllLines(Paths.get(way.trim()));
+            Files.size(path);
+            listText = Files.readAllLines(path);
         } catch (IOException e) {
-            System.out.println("При чтении файла произошла ошибка: " + e.getMessage() + " "
-                    + e.getCause());
+            System.out.println("При чтении файла произошла ошибка: " + e.getMessage() + " " + e.getCause());
             return null;
         }
         return listText;
@@ -47,7 +49,7 @@ public class FilesService implements GeneralOperations, CheckErrors {
         for (int i = 0; i < alreadyReadLines.size(); i++) {
             arraysFromList = alreadyReadLines.get(i).split(" "); // У лукоморья дуб зелёный;
             int counterArrStr = 0;
-            otherMethods.iterationByElementsStringArray(counterArrStr, arraysFromList);
+            auxiliaryActions.iterationByElementsStringArray(counterArrStr, arraysFromList);
         }
         return null;
     }
