@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 @Getter
 @Setter
 public class AuxiliaryActions {
-    
+
     public char getCharCycle(int cycleCount, String[] arraysFromList) {
         char charString = arraysFromList[cycleCount].trim().charAt(cycleCount);
         return charString;
@@ -71,7 +71,7 @@ public class AuxiliaryActions {
         return null;
     }
 
-    private StringBuffer cycleRusAlphapet(StringBuffer line, int i) {
+    /*private StringBuffer cycleRusAlphapet(StringBuffer line, int i) {
         int k = 0;
         while (k < charConstants.rusAlphabet().length) {
             if (line.charAt(i) == charConstants.rusAlphabet()[k]) {
@@ -102,5 +102,5 @@ public class AuxiliaryActions {
             k++;
         }
         return null;
-    }
+    }*/
 }
