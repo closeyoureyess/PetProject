@@ -45,7 +45,7 @@ public class FilesService implements GeneralOperations, CheckErrors {
     public List<List<?>> filterFile(List<String> alreadyReadLines) {
         String[] arraysFromList;
         for (int i = 0; i < alreadyReadLines.size(); i++) {
-            arraysFromList = alreadyReadLines.get(i).split(" "); // У81 лукоморья 48 дуб зелёный;
+            arraysFromList = alreadyReadLines.get(i).split(" "); // У лукоморья дуб зелёный;
             int counterArrStr = 0;
             otherMethods.iterationByElementsStringArray(counterArrStr, arraysFromList);
         }

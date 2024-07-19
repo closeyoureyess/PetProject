@@ -5,7 +5,8 @@ import lombok.*;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Getter
 @Setter
@@ -23,10 +24,24 @@ public class AuxiliaryActions {
         return charString;
     }
 
-    public void iterationByElementsStringArray(int counterArrStr, String[] arraysFromList) {
+    public List<List<?>> iterationByElementsStringArray(int counterArrStr, String[] arraysFromList) {
+        List<List<?>> listLists = new LinkedList<>();
         while (counterArrStr < arraysFromList.length) {
             if (counterArrStr < arraysFromList.length - 1) {
-                parseElementsLineFromArray(new StringBuffer(arraysFromList[counterArrStr]));
+                var resultMethod = parseElementsLineFromArray(new StringBuffer(arraysFromList[counterArrStr]));
+                if(resultMethod.get(0) instanceof Integer){
+                    int k = 0;
+                    while (k < resultMethod.size()){
+                        resultMethod.get(k)
+                        k++;
+                    }
+                }
+                if(resultMethod.get(0) instanceof Float){
+                    listLists.add(resultMethod.add(Float.valueOf(String.valueOf(resultMethod.get(0)) + " ")));
+                }
+                if(resultMethod.get(0) instanceof StringBuffer){
+                    listLists.add(resultMethod);
+                }
                 counterArrStr++;
             }
             if (counterArrStr == arraysFromList.length - 1) {
@@ -36,42 +51,59 @@ public class AuxiliaryActions {
         }
     }
 
-    private List<List<?>> parseElementsLineFromArray(StringBuffer line, Integer... lenghArrayString) {
-        StringBuffer stringBufferRresult = null;
-        StringBuffer stringBufferEresult;
-        StringBuffer stringBufferIntegers;
-        StringBuffer stringBufferFloats;
-        Queue<StringBuffer> resultLines = new LinkedList<>();
-        Queue<Integer> resultIntegerNumber = new LinkedList<>();
-        Queue<Float> resultFloatNumber = new LinkedList<>();
+    private List<?> parseElementsLineFromArray(StringBuffer line, Integer... endArray) {
+        StringBuffer lineResult;
+        List<StringBuffer> resultLines = new LinkedList<>();
+        List<Integer> resultIntegerNumber = new LinkedList<>();
+        List<Float> resultFloatNumber = new LinkedList<>();
         //Перебрать строку в цикле
-        for (int i = 0; i < line.length(); i++) {
-            stringBufferFloats = cycleFractionalNumber(line, i);
-            stringBufferRresult = cycleRusAlphapet(line, i);
-            stringBufferEresult = cycleEngAlphapet(line, i);
-            if (line.toString().contains(".") && lenghArrayString == null) {
-                resultFloatNumber.offer(Float.valueOf(String.valueOf(stringBufferFloats)));
-            }
-            if (line.toString().contains(".") && lenghArrayString != null) {
-                resultFloatNumber.offer(Float.valueOf(String.valueOf(stringBufferFloats.append("\n"))));
-            }
-            if (lenghArrayString == null && stringBufferRresult != null) {
-                resultLines.offer(stringBufferRresult);
-            }
-            if (lenghArrayString == null && stringBufferEresult != null) {
-                resultLines.offer(stringBufferEresult);
-            }
-            if (lenghArrayString != null && stringBufferRresult != null) {
-                resultLines.offer(stringBufferRresult.append("\n"));
-            }
-            if (lenghArrayString != null && stringBufferEresult != null) {
-                resultLines.offer(stringBufferEresult.append("\n"));
-            }
-        }
-        while (!resultLines.isEmpty()) {
-            stringBufferRresult = resultLines.poll().append(0);
-        }
+        if (String.valueOf(line).contains(".")) {
 
+        }
+        Pattern pattern = Pattern.compile(new String("[A-Я]"));
+        Matcher matcher = pattern.matcher(String.valueOf(line.charAt(0)));
+        /*for (int i = 0; i < line.length(); i++) {
+            if (String.valueOf(line).contains(".")) {
+                if (endArray == null) {
+                    resultFloatNumber.add(Float.valueOf(String.valueOf(line.append("\n"))))
+                    return resultFloatNumber;
+                }
+                if (endArray != null) {
+                    resultFloatNumber.add(Float.valueOf(String.valueOf(line)));
+                    return resultFloatNumber;
+                }
+            } else {
+                lineResult = cycleEngAlphapet(line, i);
+                if (endArray == null && lineResult != null) {
+                    resultLines.add(lineResult.append("\n"));
+                    return resultLines;
+                }
+                if (endArray != null && lineResult != null) {
+                    resultLines.add(lineResult);
+                    return resultLines;
+                }
+                lineResult = cycleRusAlphapet(line, i);
+                if (endArray == null && lineResult != null) {
+                    resultLines.add(lineResult.append("\n"));
+                    return resultLines;
+                }
+                if (endArray != null && lineResult != null) {
+                    resultLines.add(lineResult);
+                    return resultLines;
+                }
+                lineResult = cycleInteger(line, i);
+                if (endArray == null && lineResult != null) {
+                    resultIntegerNumber.add(Integer.valueOf(
+                            String.valueOf(lineResult.append("\n"))));
+                    return resultIntegerNumber;
+                }
+                if (endArray != null && lineResult != null) {
+                    resultIntegerNumber.add(Integer.valueOf(
+                            String.valueOf(lineResult)));
+                    return resultIntegerNumber;
+                }
+            }
+        }*/
         return null;
     }
 
@@ -79,7 +111,7 @@ public class AuxiliaryActions {
         int k = 0;
         while (k < charConstants.rusAlphabet().length) {
             if (line.charAt(i) == charConstants.rusAlphabet()[k]) {
-                return new StringBuffer(String.valueOf(line.charAt(i)));
+                return line;
             }
             k++;
         }
@@ -90,19 +122,9 @@ public class AuxiliaryActions {
         int k = 0;
         while (k < charConstants.engAlphabet().length) {
             if (line.charAt(i) == charConstants.engAlphabet()[k]) {
-                return new StringBuffer(String.valueOf(line.charAt(i)));
+                return line;
             }
             k++;
-        }
-        return null;
-    }
-
-    private StringBuffer cycleFractionalNumber(StringBuffer line, int i) {
-        int k = 0;
-        while (k < line.length()) {
-            line.codePointCount()
-            if (line.indexOf())
-                k++;
         }
         return null;
     }
@@ -111,16 +133,10 @@ public class AuxiliaryActions {
         int k = 0;
         while (k < charConstants.arabicNumbers().length) {
             if (line.charAt(i) == charConstants.arabicNumbers()[k]) {
-                k = 0;
                 return new StringBuffer(String.valueOf(line.charAt(i)));
             }
             k++;
         }
         return null;
-    }
-
-    private int lookingDotAmount(StringBuffer line) {
-        int dotAmount = String.valueOf(line).split("\\.").length - line.length();
-        return dotAmount;
     }
 }
