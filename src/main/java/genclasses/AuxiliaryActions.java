@@ -99,22 +99,15 @@ public class AuxiliaryActions {
 
     private StringBuffer cycleFractionalNumber(StringBuffer line, int i) {
         int k = 0;
-        int trimLetters = 0;
-        while (k < charConstants.arabicNumbers().length) {
-            if (line.charAt(i) == charConstants.engAlphabet()[k]) {
-                trimLetters++;
-            }
-            if (trimLetters > 0) {
-                if (!(line.charAt(i) == charConstants.engAlphabet()[k])) {
-                    return new StringBuffer(String.valueOf(line.sub));
-                }
-            }
-            k++;
+        while (k < line.length()) {
+            line.codePointCount()
+            if (line.indexOf())
+                k++;
         }
         return null;
     }
 
-    private StringBuffer cycleInteger(StringBuffer line, int i) {
+    private StringBuffer cycleInteger(StringBuffer line, int i) { // Дуб1.783.
         int k = 0;
         while (k < charConstants.arabicNumbers().length) {
             if (line.charAt(i) == charConstants.arabicNumbers()[k]) {
@@ -124,5 +117,10 @@ public class AuxiliaryActions {
             k++;
         }
         return null;
+    }
+
+    private int lookingDotAmount(StringBuffer line) {
+        int dotAmount = String.valueOf(line).split("\\.").length - line.length();
+        return dotAmount;
     }
 }
