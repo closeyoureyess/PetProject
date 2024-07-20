@@ -1,106 +1,139 @@
 package genclasses;
 
-import constants.CharConstants;
+import errors.CheckErrors;
+import errors.IncorrectLineExeption;
 import lombok.*;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Getter
 @Setter
-public class AuxiliaryActions {
+public class AuxiliaryActions implements CheckErrors {
+
+    private String stringLine;
+    private Integer integerNumber;
+    private Float fraction;
 
     public char getCharCycle(int cycleCount, String[] arraysFromList) {
         char charString = arraysFromList[cycleCount].trim().charAt(cycleCount);
         return charString;
     }
 
-    public List<List<?>> iterationByElementsStringArray(int counterArrStr, String[] arraysFromList) {
-        List<List<?>> listLists = new LinkedList<>();
-        List<StringBuffer> resultLines = new LinkedList<>();
-        List<Float> resultFloatNumber = new LinkedList<>();
-        List<Integer> resultIntegerNumber = new LinkedList<>();
+    //Итерация по строчке, перебор всех элементов массиве String[] по порядку, начиная с 0
+    //У - элемент [0]
+    //Лукоморья - элемент [1]
+    //Дуб - элемент [2]
+    //Зеленый и т.д - элемент [3]
+    public Optional<LinkedList<AuxiliaryActions>> iterationByElementsStringArray(String[] arraysFromList) {
+        Optional<AuxiliaryActions> processedValuesList;
+        LinkedList<AuxiliaryActions> resultValuesList = new LinkedList<>();
+        int counterArrStr = 0;
         while (counterArrStr < arraysFromList.length) {
-            if (counterArrStr < arraysFromList.length - 1) {
-                var resultMethod = parseElementsLineFromArray(new StringBuffer(arraysFromList[counterArrStr]));
-                if (resultMethod != null && resultMethod.getFirst() instanceof Integer) {
-                    resultIntegerNumber.add((Integer) resultMethod.getFirst());
-                }
-                if (resultMethod != null && resultMethod.getFirst() instanceof Float) {
-                    resultFloatNumber.add((Float) resultMethod.getFirst());
-                }
-                if (resultMethod != null && resultMethod.getFirst() instanceof StringBuffer) {
-                    resultLines.add((StringBuffer) resultMethod.getFirst());
-                }
+            processedValuesList = parseElementsLineFromArray(arraysFromList[counterArrStr]);
+
+            if (!processedValuesList.isEmpty() && processedValuesList.get().getIntegerNumber() != null) {
+                resultValuesList.add(new AuxiliaryActions(processedValuesList.get().getIntegerNumber()));
+                counterArrStr++;
+            } else if (!processedValuesList.isEmpty() && processedValuesList.get().getFraction() != null) {
+                resultValuesList.add(new AuxiliaryActions(processedValuesList.get().getFraction()));
+                counterArrStr++;
+            } else if (!processedValuesList.isEmpty() && processedValuesList.get().getStringLine() != null) {
+                resultValuesList.add(new AuxiliaryActions(processedValuesList.get().getStringLine()));
                 counterArrStr++;
             }
             if (counterArrStr == arraysFromList.length - 1) {
-                parseElementsLineFromArray(new StringBuffer(arraysFromList[counterArrStr]));
-                counterArrStr++;
+                return Optional.of(resultValuesList);
             }
+            counterArrStr++;
         }
-        listLists.add(resultLines);
-        listLists.add(resultIntegerNumber);
-        listLists.add(resultFloatNumber);
-        return listLists;
+        return Optional.empty();
     }
 
-    private List<?> parseElementsLineFromArray(StringBuffer line) {
-        //Перебрать строку в цикле
-        if (String.valueOf(line).contains(".")) {
-            List<Float> resultFloat = new LinkedList<>();
-            resultFloat.add(Float.valueOf(String.valueOf(line)));
-            return resultFloat;
+    //Проверка, что в элементе из массива, строка? целое число? дробь?
+    private Optional<AuxiliaryActions> parseElementsLineFromArray(String line) { //^-?[0-9]*\.[0-9]+(E[+-]?[0-9]+)?$
+        AuxiliaryActions returnedObject = new AuxiliaryActions();
+        AuxiliaryActions trimResult = trimDotLine(line);
+        //^[0-9]+(\.[0-9]+)?(E[+-]?[0-9]+)?$
+        //^[0-9]*\.[0-9]*(E[-]?[0-9]+)?$
+        Pattern pattern = Pattern.compile(new String("^-?[0-9]*\\.[0-9]*(E[-]?[0-9]+)?$"));
+        Matcher matcher = pattern.matcher(line);
+        boolean result = matcher.find();
+
+        if (result) {
+            returnedObject.setFraction(Float.valueOf(line));
+            return Optional.of(new AuxiliaryActions(returnedObject.getFraction()));
         }
-        Pattern pattern = Pattern.compile(new String("[а-яА-Яa-zA-Z]"));
-        Matcher matcher = pattern.matcher(String.valueOf(line.charAt(0)));
-        if (matcher.find()) {
-            List<StringBuffer> resultLines = new LinkedList<>();
-            resultLines.add(line);
-            return resultLines;
-        }
-        pattern = Pattern.compile(new String("[0-9]"));
+
+        pattern = Pattern.compile(new String("^(?!\\.)[а-яА-Яa-zA-Z]*\\.$|^[а-яА-Яa-zA-Z]+$\n"));
         matcher = pattern.matcher(String.valueOf(line.charAt(0)));
-        if (matcher.find()) {
-            List<Integer> resultIntegerNumber = new LinkedList<>();
-            resultIntegerNumber.add(Integer.valueOf(String.valueOf(line)));
-            return resultIntegerNumber;
+        result = matcher.find();
+        if (result) {
+            returnedObject.setStringLine(line);
+            return Optional.of(new AuxiliaryActions(returnedObject.getStringLine()));
+        }
+
+        pattern = Pattern.compile(new String("^(?!.*\\.\\d*)[+-]?\\d+$\n"));
+        matcher = pattern.matcher(String.valueOf(line.charAt(0)));
+        result = matcher.find();
+        if (result) {
+            returnedObject.setIntegerNumber(Integer.valueOf(line));
+            return Optional.of(new AuxiliaryActions(returnedObject.getIntegerNumber()));
+        }
+        try {
+            checkIncorrectLine(result);
+        } catch (IncorrectLineExeption e) {
+            System.out.println(e.getMessage());
+            return Optional.empty();
+        }
+        return Optional.empty();
+    }
+
+    public AuxiliaryActions(String a, Integer b, Float c) {
+        this.stringLine = a;
+        this.integerNumber = b;
+        this.fraction = c;
+    }
+
+    public AuxiliaryActions(String a, Integer b) {
+        this.stringLine = a;
+        this.integerNumber = b;
+    }
+
+    public AuxiliaryActions(Float f) {
+        this.fraction = f;
+    }
+
+    public AuxiliaryActions(String s) {
+        this.stringLine = s;
+    }
+
+    public AuxiliaryActions(Integer i) {
+        this.integerNumber = i;
+    }
+
+    public AuxiliaryActions() {
+    }
+
+    private AuxiliaryActions trimDotLine(String line) {
+        AuxiliaryActions returnedObject = new AuxiliaryActions();
+        String newLine;
+        if (line.charAt(line.length() - 1) == '.' && line.charAt(0) == '.') {
+            newLine = line.substring(line.length() - 1);
+            newLine = newLine.substring(line.charAt(0));
+            returnedObject.setFraction(Float.valueOf(newLine));
+            return new AuxiliaryActions(returnedObject.getFraction());
+        } else if (line.charAt(line.length() - 1) == '.') {
+            newLine = line.substring(line.length() - 1);
+            returnedObject.setFraction(Float.valueOf(newLine));
+            return new AuxiliaryActions(returnedObject.getFraction());
+        } else if (line.charAt(0) == '.') {
+            newLine = line.substring(line.charAt(0));
+            returnedObject.setFraction(Float.valueOf(newLine));
+            return new AuxiliaryActions(returnedObject.getFraction());
         }
         return null;
     }
 
-    /*private StringBuffer cycleRusAlphapet(StringBuffer line, int i) {
-        int k = 0;
-        while (k < charConstants.rusAlphabet().length) {
-            if (line.charAt(i) == charConstants.rusAlphabet()[k]) {
-                return line;
-            }
-            k++;
-        }
-        return null;
-    }
-
-    private StringBuffer cycleEngAlphapet(StringBuffer line, int i) {
-        int k = 0;
-        while (k < charConstants.engAlphabet().length) {
-            if (line.charAt(i) == charConstants.engAlphabet()[k]) {
-                return line;
-            }
-            k++;
-        }
-        return null;
-    }
-
-    private StringBuffer cycleInteger(StringBuffer line, int i) { //
-        int k = 0;
-        while (k < charConstants.arabicNumbers().length) {
-            if (line.charAt(i) == charConstants.arabicNumbers()[k]) {
-                return new StringBuffer(String.valueOf(line.charAt(i)));
-            }
-            k++;
-        }
-        return null;
-    }*/
 }
