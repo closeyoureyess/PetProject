@@ -16,34 +16,43 @@ public class AuxiliaryActions implements CheckErrors {
     private Integer integerNumber;
     private Float fraction;
 
-    public char getCharCycle(int cycleCount, String[] arraysFromList) {
-        char charString = arraysFromList[cycleCount].trim().charAt(cycleCount);
-        return charString;
-    }
-
     //Итерация по строчке, перебор всех элементов массиве String[] по порядку, начиная с 0
     //У - элемент [0]
     //Лукоморья - элемент [1]
     //Дуб - элемент [2]
-    //Зеленый и т.д - элемент [3]
+    //Зеленый - элемент [3]
+    //1234 - элемент [4]
+    //Конец массива и т.д
     public Optional<LinkedList<AuxiliaryActions>> iterationByElementsStringArray(String[] arraysFromList) {
         Optional<AuxiliaryActions> processedValuesList;
         LinkedList<AuxiliaryActions> resultValuesList = new LinkedList<>();
         int counterArrStr = 0;
         while (counterArrStr < arraysFromList.length) {
+
             processedValuesList = parseElementsLineFromArray(arraysFromList[counterArrStr]);
 
-            if (!processedValuesList.isEmpty() && processedValuesList.get().getIntegerNumber() != null) {
+            if (processedValuesList.isPresent() && processedValuesList.get().getIntegerNumber()
+                    != null && counterArrStr < arraysFromList.length - 1) {
+
                 resultValuesList.add(new AuxiliaryActions(processedValuesList.get().getIntegerNumber()));
                 counterArrStr++;
-            } else if (!processedValuesList.isEmpty() && processedValuesList.get().getFraction() != null) {
+
+            } else if (processedValuesList.isPresent() && processedValuesList.get().getFraction()
+                    != null && counterArrStr < arraysFromList.length - 1) {
+
                 resultValuesList.add(new AuxiliaryActions(processedValuesList.get().getFraction()));
                 counterArrStr++;
-            } else if (!processedValuesList.isEmpty() && processedValuesList.get().getStringLine() != null) {
+
+            } else if (processedValuesList.isPresent() && processedValuesList.get().getStringLine()
+                    != null && counterArrStr < arraysFromList.length - 1) {
+
                 resultValuesList.add(new AuxiliaryActions(processedValuesList.get().getStringLine()));
                 counterArrStr++;
+
+            } else if (processedValuesList.isEmpty()) {
+                return Optional.empty();
             }
-            if (counterArrStr == arraysFromList.length - 1) {
+            if (processedValuesList.isPresent() && counterArrStr == arraysFromList.length - 1) {
                 return Optional.of(resultValuesList);
             }
             counterArrStr++;
@@ -54,20 +63,18 @@ public class AuxiliaryActions implements CheckErrors {
     //Проверка, что в элементе из массива, строка? целое число? дробь?
     private Optional<AuxiliaryActions> parseElementsLineFromArray(String line) { //^-?[0-9]*\.[0-9]+(E[+-]?[0-9]+)?$
         AuxiliaryActions returnedObject = new AuxiliaryActions();
-        AuxiliaryActions trimResult = trimDotLine(line);
-        //^[0-9]+(\.[0-9]+)?(E[+-]?[0-9]+)?$
-        //^[0-9]*\.[0-9]*(E[-]?[0-9]+)?$
+
         Pattern pattern = Pattern.compile(new String("^-?[0-9]*\\.[0-9]*(E[-]?[0-9]+)?$"));
         Matcher matcher = pattern.matcher(line);
         boolean result = matcher.find();
-
         if (result) {
             returnedObject.setFraction(Float.valueOf(line));
             return Optional.of(new AuxiliaryActions(returnedObject.getFraction()));
         }
 
-        pattern = Pattern.compile(new String("^(?!\\.)[а-яА-Яa-zA-Z]*\\.$|^[а-яА-Яa-zA-Z]+$\n"));
-        matcher = pattern.matcher(String.valueOf(line.charAt(0)));
+        pattern = Pattern.compile(new String("^(?!\\.)[а-яА-Яa-zA-Z]*\\.$|^[а-яА-Яa-zA-Z]+$"));
+        System.out.println(line.charAt(0) +  " TEEEST");
+        matcher = pattern.matcher(String.valueOf(line.trim().charAt(0)));
         result = matcher.find();
         if (result) {
             returnedObject.setStringLine(line);
@@ -82,6 +89,7 @@ public class AuxiliaryActions implements CheckErrors {
             return Optional.of(new AuxiliaryActions(returnedObject.getIntegerNumber()));
         }
         try {
+            System.out.println("Здесь?");
             checkIncorrectLine(result);
         } catch (IncorrectLineExeption e) {
             System.out.println(e.getMessage());
@@ -115,25 +123,4 @@ public class AuxiliaryActions implements CheckErrors {
 
     public AuxiliaryActions() {
     }
-
-    private AuxiliaryActions trimDotLine(String line) {
-        AuxiliaryActions returnedObject = new AuxiliaryActions();
-        String newLine;
-        if (line.charAt(line.length() - 1) == '.' && line.charAt(0) == '.') {
-            newLine = line.substring(line.length() - 1);
-            newLine = newLine.substring(line.charAt(0));
-            returnedObject.setFraction(Float.valueOf(newLine));
-            return new AuxiliaryActions(returnedObject.getFraction());
-        } else if (line.charAt(line.length() - 1) == '.') {
-            newLine = line.substring(line.length() - 1);
-            returnedObject.setFraction(Float.valueOf(newLine));
-            return new AuxiliaryActions(returnedObject.getFraction());
-        } else if (line.charAt(0) == '.') {
-            newLine = line.substring(line.charAt(0));
-            returnedObject.setFraction(Float.valueOf(newLine));
-            return new AuxiliaryActions(returnedObject.getFraction());
-        }
-        return null;
-    }
-
 }

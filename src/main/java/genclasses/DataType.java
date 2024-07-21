@@ -6,27 +6,28 @@ import lombok.NoArgsConstructor;
 import java.util.LinkedList;
 import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
 public class DataType {
 
-    private static List<Integer> integerList = new LinkedList<>();
-    private static List<Float> floatList = new LinkedList<>();
+    private static List<String> integerList = new LinkedList<>();
+    private static List<String> floatList = new LinkedList<>();
     private static List<String> stringList = new LinkedList<>();
 
-    public List<Integer> getIntegerList() {
+    public DataType() {
+    }
+
+    public List<String> getIntegerList() {
         return integerList;
     }
 
-    public void setIntegerList(List<Integer> integerList) {
+    public void setIntegerList(List<String> integerList) {
         DataType.integerList = integerList;
     }
 
-    public List<Float> getFloatList() {
+    public List<String> getFloatList() {
         return floatList;
     }
 
-    public void setFloatList(List<Float> floatList) {
+    public void setFloatList(List<String> floatList) {
         DataType.floatList = floatList;
     }
 
