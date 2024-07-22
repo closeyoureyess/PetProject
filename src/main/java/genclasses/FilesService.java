@@ -29,6 +29,8 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
     private SpaceSign spaceSign = new SpaceSign(" ");
 
     private DataType dataType = new DataType();
+    AuxiliaryActions auxiliaryActions = new AuxiliaryActions();
+
     private String wayFileResult;
     private Integer recordingMode;
 
@@ -54,7 +56,6 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
 
     @Override
     public boolean filterFile(List<String> alreadyReadLines) {
-        AuxiliaryActions auxiliaryActions = new AuxiliaryActions();
         // Лист со всем текстом из файла
         for (int i = 0; i < alreadyReadLines.size(); i++) {
             //Строчка из текста, разбитая по пробелу на массив
@@ -70,6 +71,110 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             }
         }
         return true;
+    }
+
+    @Override
+    public void sortedDataToFile(List<String> listString, List<String> listInteger, List<String> floatList,
+                                 Integer recMode, String prefix, String customPath) {
+        if (customPath != null) {
+            verifyListsCreate(listString, listInteger, floatList, recMode, prefix, customPath, false);
+        } else {
+            verifyListsCreate(listString, listInteger, floatList, recMode, prefix, customPath, true);
+        }
+    }
+
+    @Override
+    public Integer a(Integer recMode) {
+        try {
+            checkRecMode(recMode);
+        } catch (IncorrectRecExeption e) {
+            log.error(e.getMessage());
+            return null;
+        }
+        if (recMode == 0 && recordingMode == 1) {
+            recordingMode = 1;
+            log.info("Режим: перезапись");
+            return 0;
+        } else if (recMode == 0 && recordingMode == 0) {
+            log.warn("Режим перезаписи уже активен!");
+            return 0;
+        }
+        if (recMode == 1 && recordingMode == 0) {
+            recordingMode = 1;
+            log.info("Режим: добавление в существующие");
+            return 1;
+        } else if (recMode == 1 && recordingMode == 1) {
+            log.warn("Режим добавления в существующие уже активен!");
+            return 1;
+        }
+        return null;
+    }
+
+    @Override
+    public Integer s(String customPath, String prefix) {
+        String[] typeFiles = {typeDataFileConstants.string(), typeDataFileConstants.integers(), typeDataFileConstants.floats()};
+        List<String> list;
+        if (customPath != null) {
+            return additionSymbolsOutcome(customPath, typeFiles);
+        } else {
+            try {
+                customPath = FilesService.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+                return additionSymbolsOutcome(customPath, typeFiles);
+            } catch (URISyntaxException e) {
+                log.error(e.getMessage() + " " + e.getCause());
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean f() {
+        return false;
+    }
+
+    @Override
+    public String o(String way) {
+        try {
+            checkDirectoryToFile(new File(way.trim()));
+            this.wayFileResult = way;
+            return way;
+        } catch (IncorrectDirectoryExeption e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public String p(String prefix) {
+        try {
+            checkPrefixFile(prefix);
+            return prefix;
+        } catch (IncorrectPrefixExeption e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+
+    private int countCharactersInLine(List<String> list) {
+        int numberCharacters = 0;
+        for (int i = 0; i < list.size(); i++) {
+            numberCharacters += list.get(i).length();
+        }
+        return numberCharacters;
+    }
+
+    private int additionSymbolsOutcome(String paths, String[] typeFiles) {
+        List<String> list;
+        int numberCharacters = 0;
+        try {
+            for (int i = 0; i < 3; i++) {
+                list = (Files.readAllLines(Paths.get(paths + typeFiles[i])));
+                numberCharacters += countCharactersInLine(list);
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage() + " " + e.getCause());
+        }
+        return numberCharacters;
     }
 
     private void saveBuiltTypes(LineType listWithTypes, int sizeCollectionLines, int counterMainCycle) {
@@ -95,16 +200,6 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
 
         } else if (counterMainCycle == sizeCollectionLines - 1) {
             dataType.getStringList().add(String.valueOf(listWithTypes.getFraction()));
-        }
-    }
-
-    @Override
-    public void sortedDataToFile(List<String> listString, List<String> listInteger, List<String> floatList,
-                                 Integer recMode, String prefix, String customPath) {
-        if (customPath != null) {
-            verifyListsCreate(listString, listInteger, floatList, recMode, prefix, customPath, false);
-        } else {
-            verifyListsCreate(listString, listInteger, floatList, recMode, prefix, customPath, true);
         }
     }
 
@@ -156,100 +251,6 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         } catch (IOException e) {
             log.error(e.getMessage() + " " + e.getCause());
             return false;
-        }
-    }
-
-    @Override
-    public Integer a(Integer recMode) {
-        try {
-            checkRecMode(recMode);
-        } catch (IncorrectRecExeption e) {
-            log.error(e.getMessage());
-            return null;
-        }
-        if (recMode == 0 && recordingMode == 1) {
-            recordingMode = 1;
-            System.out.println("Режим: перезапись");
-            return 1;
-        } else if (recMode == 0 && recordingMode == 0) {
-            System.out.println("Режим перезаписи уже активен!");
-            return 1;
-        }
-        if (recMode == 1 && recordingMode == 0) {
-            recordingMode = 1;
-            System.out.println("Режим: добавление в существующие");
-            return 2;
-        } else if (recMode == 1 && recordingMode == 1) {
-            System.out.println("Режим добавления в существующие уже активен!");
-            return 2;
-        }
-        return null;
-    }
-
-    @Override
-    public Integer s(String customPath, String prefix) {
-        String[] typeFiles = {typeDataFileConstants.string(), typeDataFileConstants.integers(), typeDataFileConstants.floats()};
-        List<String> list;
-        if (customPath != null) {
-            return additionSymbolsOutcome(customPath, typeFiles);
-        } else {
-            try {
-                customPath = FilesService.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-                return additionSymbolsOutcome(customPath, typeFiles);
-            } catch (URISyntaxException e) {
-                log.error(e.getMessage() + " " + e.getCause());
-            }
-        }
-        return null;
-    }
-
-    private int countCharactersInLine(List<String> list) {
-        int numberCharacters = 0;
-        for (int i = 0; i < list.size(); i++) {
-            numberCharacters += list.get(i).length();
-        }
-        return numberCharacters;
-    }
-
-    private int additionSymbolsOutcome(String paths, String[] typeFiles) {
-        List<String> list;
-        int numberCharacters = 0;
-        try {
-            for (int i = 0; i < 3; i++) {
-                list = (Files.readAllLines(Paths.get(paths + typeFiles[i])));
-                numberCharacters += countCharactersInLine(list);
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage() + " " + e.getCause());
-        }
-        return numberCharacters;
-    }
-
-    @Override
-    public boolean f() {
-        return false;
-    }
-
-    @Override
-    public String o(String way) {
-        try {
-            checkDirectoryToFile(new File(way.trim()));
-            this.wayFileResult = way;
-            return way;
-        } catch (IncorrectDirectoryExeption e) {
-            log.error(e.getMessage());
-            return null;
-        }
-    }
-
-    @Override
-    public String p(String prefix) {
-        try {
-            checkPrefixFile(prefix);
-            return prefix;
-        } catch (IncorrectPrefixExeption e) {
-            log.error(e.getMessage());
-            return null;
         }
     }
 }

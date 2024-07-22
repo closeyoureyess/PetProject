@@ -17,8 +17,6 @@ import java.util.regex.Pattern;
 @Slf4j
 public class AuxiliaryActions implements CheckErrors {
 
-    LineType lineType = new LineType();
-
     //Итерация по строчке, перебор всех элементов массиве String[] по порядку, начиная с 0
     //У - элемент [0]
     //Лукоморья - элемент [1]
