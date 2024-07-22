@@ -3,18 +3,21 @@ package genclasses;
 import errors.CheckErrors;
 import errors.IncorrectLineExeption;
 import lombok.*;
+import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Getter
-@Setter
+@NoArgsConstructor
+@Slf4j
 public class AuxiliaryActions implements CheckErrors {
 
-    private String stringLine;
-    private Integer integerNumber;
-    private Float fraction;
+    LineType lineType = new LineType();
 
     //Итерация по строчке, перебор всех элементов массиве String[] по порядку, начиная с 0
     //У - элемент [0]
@@ -23,104 +26,67 @@ public class AuxiliaryActions implements CheckErrors {
     //Зеленый - элемент [3]
     //1234 - элемент [4]
     //Конец массива и т.д
-    public Optional<LinkedList<AuxiliaryActions>> iterationByElementsStringArray(String[] arraysFromList) {
-        Optional<AuxiliaryActions> processedValuesList;
-        LinkedList<AuxiliaryActions> resultValuesList = new LinkedList<>();
-        int counterArrStr = 0;
-        while (counterArrStr < arraysFromList.length) {
+    public Optional<LineType> iterationByElementsStringArray(String arraysFromList) {
 
-            processedValuesList = parseElementsLineFromArray(arraysFromList[counterArrStr]);
+        Optional<LineType> processedValuesList;
+        LinkedList<LineType> resultValuesList = new LinkedList<>();
 
-            if (processedValuesList.isPresent() && processedValuesList.get().getIntegerNumber()
-                    != null && counterArrStr < arraysFromList.length - 1) {
+        processedValuesList = parseElementsLineFromArray(arraysFromList);
 
-                resultValuesList.add(new AuxiliaryActions(processedValuesList.get().getIntegerNumber()));
-                counterArrStr++;
+        if (processedValuesList.isPresent() && processedValuesList.get().getIntegerNumber()
+                != null) {
 
-            } else if (processedValuesList.isPresent() && processedValuesList.get().getFraction()
-                    != null && counterArrStr < arraysFromList.length - 1) {
+            return Optional.of(new LineType(processedValuesList.get().getIntegerNumber()));
 
-                resultValuesList.add(new AuxiliaryActions(processedValuesList.get().getFraction()));
-                counterArrStr++;
+        } else if (processedValuesList.isPresent() && processedValuesList.get().getFraction()
+                != null) {
 
-            } else if (processedValuesList.isPresent() && processedValuesList.get().getStringLine()
-                    != null && counterArrStr < arraysFromList.length - 1) {
+            return Optional.of(new LineType(processedValuesList.get().getFraction()));
 
-                resultValuesList.add(new AuxiliaryActions(processedValuesList.get().getStringLine()));
-                counterArrStr++;
+        } else if (processedValuesList.isPresent() && processedValuesList.get().getStringLine()
+                != null) {
 
-            } else if (processedValuesList.isEmpty()) {
-                return Optional.empty();
-            }
-            if (processedValuesList.isPresent() && counterArrStr == arraysFromList.length - 1) {
-                return Optional.of(resultValuesList);
-            }
-            counterArrStr++;
+            return Optional.of(new LineType(processedValuesList.get().getStringLine()));
+
+        } else if (processedValuesList.isEmpty()) {
+            return Optional.empty();
         }
         return Optional.empty();
     }
 
     //Проверка, что в элементе из массива, строка? целое число? дробь?
-    private Optional<AuxiliaryActions> parseElementsLineFromArray(String line) { //^-?[0-9]*\.[0-9]+(E[+-]?[0-9]+)?$
-        AuxiliaryActions returnedObject = new AuxiliaryActions();
+    private Optional<LineType> parseElementsLineFromArray(String line) { //^-?[0-9]*\.[0-9]+(E[+-]?[0-9]+)?$
+        LineType lineReturnedObject = new LineType();
 
         Pattern pattern = Pattern.compile(new String("^-?[0-9]*\\.[0-9]*(E[-]?[0-9]+)?$"));
         Matcher matcher = pattern.matcher(line);
         boolean result = matcher.find();
         if (result) {
-            returnedObject.setFraction(Float.valueOf(line));
-            return Optional.of(new AuxiliaryActions(returnedObject.getFraction()));
+            lineReturnedObject.setFraction(Float.valueOf(line));
+            return Optional.of(new LineType(lineReturnedObject.getFraction()));
         }
 
         pattern = Pattern.compile(new String("^(?!\\.)[а-яА-Яa-zA-Z]*\\.$|^[а-яА-Яa-zA-Z]+$"));
-        System.out.println(line.charAt(0) +  " TEEEST");
         matcher = pattern.matcher(String.valueOf(line.trim().charAt(0)));
         result = matcher.find();
         if (result) {
-            returnedObject.setStringLine(line);
-            return Optional.of(new AuxiliaryActions(returnedObject.getStringLine()));
+            lineReturnedObject.setStringLine(line);
+            return Optional.of(new LineType(lineReturnedObject.getStringLine()));
         }
 
         pattern = Pattern.compile(new String("^(?!.*\\.\\d*)[+-]?\\d+$\n"));
         matcher = pattern.matcher(String.valueOf(line.charAt(0)));
         result = matcher.find();
         if (result) {
-            returnedObject.setIntegerNumber(Integer.valueOf(line));
-            return Optional.of(new AuxiliaryActions(returnedObject.getIntegerNumber()));
+            lineReturnedObject.setIntegerNumber(Integer.valueOf(line));
+            return Optional.of(new LineType(lineReturnedObject.getIntegerNumber()));
         }
         try {
-            System.out.println("Здесь?");
             checkIncorrectLine(result);
         } catch (IncorrectLineExeption e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             return Optional.empty();
         }
         return Optional.empty();
-    }
-
-    public AuxiliaryActions(String a, Integer b, Float c) {
-        this.stringLine = a;
-        this.integerNumber = b;
-        this.fraction = c;
-    }
-
-    public AuxiliaryActions(String a, Integer b) {
-        this.stringLine = a;
-        this.integerNumber = b;
-    }
-
-    public AuxiliaryActions(Float f) {
-        this.fraction = f;
-    }
-
-    public AuxiliaryActions(String s) {
-        this.stringLine = s;
-    }
-
-    public AuxiliaryActions(Integer i) {
-        this.integerNumber = i;
-    }
-
-    public AuxiliaryActions() {
     }
 }

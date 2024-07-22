@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import java.util.LinkedList;
 import java.util.List;
 
+
 public class DataType {
 
     private static List<String> integerList = new LinkedList<>();

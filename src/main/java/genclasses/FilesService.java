@@ -1,49 +1,52 @@
 package genclasses;
 
+import constants.EscapeSequence;
+import constants.SpaceSign;
+import constants.TypeDataFileConstants;
 import errors.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Slf4j
 public class FilesService implements FileCommands, CheckErrors, FileGenOperation {
 
-    private DataType dataType = new DataType();
-    ;
-    private String wayFile;
+    private TypeDataFileConstants typeDataFileConstants = new TypeDataFileConstants("integers.txt",
+            "floats.txt", "strings.txt");
+    private EscapeSequence escapeSequence = new EscapeSequence("\n");
+    private SpaceSign spaceSign = new SpaceSign(" ");
 
-    private static Integer recordingMode;
+    private DataType dataType = new DataType();
+    private String wayFileResult;
+    private Integer recordingMode;
 
     @Override
-    public List<String> cReadFiles(String way) {
-        this.wayFile = way;
+    public List<String> customReadFiles(String way) { // Сохранить эту переменную в List в Main и отдать -s для подсчета
         try {
             checkTypeFile(way);
-        } catch (IncorrectTypeFileException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
-        try {
             checkPathToFile(new File(way.trim()));
-        } catch (IncorrectPathException e) {
-            System.out.println(e.getMessage() + " " + e.getCause());
+        } catch (IncorrectTypeFileException | IncorrectPathException e) {
+            log.info(e.getMessage());
             return null;
         }
         List<String> listText;
         Path path = Paths.get(way.trim());
         try {
-            Files.size(path);
             listText = Files.readAllLines(path);
         } catch (IOException e) {
-            System.out.println("При чтении файла произошла ошибка: " + e.getMessage() + " " + e.getCause());
+            log.error("При чтении файла произошла ошибка: " + e.getMessage() + " " + e.getCause());
             return null;
         }
         return listText;
@@ -55,14 +58,13 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         // Лист со всем текстом из файла
         for (int i = 0; i < alreadyReadLines.size(); i++) {
             //Строчка из текста, разбитая по пробелу на массив
-            String[] arraysFromList = alreadyReadLines.get(i).split(" ");
-            Optional<LinkedList<AuxiliaryActions>> optionalAuxiliaryActions = auxiliaryActions
-                    .iterationByElementsStringArray(arraysFromList);
+            /*String[] arraysFromList = alreadyReadLines.get(i).split(escapeSequence.escapeSequence());*/
+            Optional<LineType> optionalLineType = auxiliaryActions
+                    .iterationByElementsStringArray(alreadyReadLines.get(i));
             //Определить, что вернулся не null
-            if (optionalAuxiliaryActions.isPresent()) {
-                //Собрать элементы в полноценное предложенbt
-                List<String> listBuiltTypes = buildLine(optionalAuxiliaryActions.get(), alreadyReadLines.size(), i);
-                saveBuiltTypes(listBuiltTypes, listBuiltTypes.size()); //Сохранить собранные данные в коллекции(DataType) построчно
+            if (optionalLineType.isPresent()) {
+                //Собрать элементы в полноценное предложение
+                saveBuiltTypes(optionalLineType.get(), alreadyReadLines.size(), i);
             } else {
                 return false;
             }
@@ -70,89 +72,114 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         return true;
     }
 
-    private List<String> buildLine(LinkedList<AuxiliaryActions> linkedList, int sizeMainCollection,
-                                   int currentIteration) {
-        int counter = 0;
-        StringBuilder additionStrings = new StringBuilder();
-        StringBuilder additionIntegers = new StringBuilder();
-        StringBuilder additionFloats = new StringBuilder();
-        while (counter < linkedList.size()) {
-            //Если в объекте, который достали, заполнено поле String
-            if (linkedList.get(counter).getStringLine() != null) {
-                //Если стрингбилдер не пустой, т.е есть, с чем проводить склейку
-                if (!additionStrings.isEmpty()) {
-                    //Если еще не дошли до конца коллекции, делаем простое сложение строк, если дошли до конца- нужно добавить знак перехода
-//                    На следующую строку + проверка на то, что это не конец основной коллекции, иначе это будет последняя записанная строка
-//                    Поэтому, символ перехода на следующую строку в ней не нужен
-                    if (counter < linkedList.size() - 1) {
-                        additionStrings.append(" ").append(linkedList.get(counter).getStringLine());
-                    } else if (counter == linkedList.size() - 1 && !(currentIteration == sizeMainCollection - 1)) {
-                        additionStrings.append(" ").append(linkedList.get(counter).getStringLine()).append("\n");
-                    }
-                } else { //Если стрингбилдер пустой, т.е мы еще ни разу не помещали в него значение, которое лежит в String в AuxiliaryActions
-                    additionStrings.append(linkedList.get(counter).getStringLine());
-                }
-            }
-            if (linkedList.get(counter).getIntegerNumber() != null) {
-                if (!additionIntegers.isEmpty()) {
-                    if (counter < linkedList.size() - 1) {
-                        additionIntegers.append(" ").append(linkedList.get(counter).getStringLine());
-                    } else if (counter == linkedList.size() - 1 && !(currentIteration == sizeMainCollection - 1)) {
-                        additionIntegers.append(" ").append(linkedList.get(counter).getStringLine()).append("\n");
-                    }
-                }
-            }
-            if (linkedList.get(counter).getFraction() != null) {
-                if (!additionFloats.isEmpty()) {
-                    if (counter < linkedList.size() - 1) {
-                        additionFloats.append(" ").append(linkedList.get(counter).getStringLine());
-                    } else if (counter == linkedList.size() - 1 && !(currentIteration == sizeMainCollection - 1)) {
-                        additionFloats.append(" ").append(linkedList.get(counter).getStringLine()).append("\n");
-                    }
-                }
-            }
-            counter++;
-        }
-        return List.of(String.valueOf(additionStrings), String.valueOf(additionIntegers), String.valueOf(additionFloats));
-    }
+    private void saveBuiltTypes(LineType listWithTypes, int sizeCollectionLines, int counterMainCycle) {
+        if (listWithTypes.getStringLine() != null && counterMainCycle < sizeCollectionLines - 1) {
 
-    private void saveBuiltTypes(List<String> listBuiltTypes, int sizeListBuiltTypes) {
-        int counter = 0;
-        if(counter < sizeListBuiltTypes) {
-            dataType.getStringList().add(String.valueOf(listBuiltTypes.get(counter)));
-            counter++;
+            dataType.getStringList().add(listWithTypes.getStringLine() + escapeSequence.escapeSequence());
+
+        } else if (counterMainCycle == sizeCollectionLines - 1) {
+            dataType.getStringList().add(listWithTypes.getStringLine());
         }
-        if(counter < sizeListBuiltTypes) {
-            dataType.getIntegerList().add(String.valueOf(listBuiltTypes.get(counter)));
-            counter++;
+
+        if (listWithTypes.getIntegerNumber() != null && counterMainCycle < sizeCollectionLines - 1) {
+
+            dataType.getStringList().add(String.valueOf(listWithTypes.getIntegerNumber()) + escapeSequence.escapeSequence());
+
+        } else if (counterMainCycle == sizeCollectionLines - 1) {
+            dataType.getStringList().add(String.valueOf(listWithTypes.getIntegerNumber()));
         }
-        if(counter < sizeListBuiltTypes) {
-            dataType.getFloatList().add(String.valueOf(listBuiltTypes.get(counter)));
+
+        if (listWithTypes.getFraction() != null && counterMainCycle < sizeCollectionLines - 1) {
+
+            dataType.getStringList().add(String.valueOf(listWithTypes.getFraction()) + escapeSequence.escapeSequence());
+
+        } else if (counterMainCycle == sizeCollectionLines - 1) {
+            dataType.getStringList().add(String.valueOf(listWithTypes.getFraction()));
         }
     }
 
+    @Override
+    public void sortedDataToFile(List<String> listString, List<String> listInteger, List<String> floatList,
+                                 Integer recMode, String prefix, String customPath) {
+        if (customPath != null) {
+            verifyListsCreate(listString, listInteger, floatList, recMode, prefix, customPath, false);
+        } else {
+            verifyListsCreate(listString, listInteger, floatList, recMode, prefix, customPath, true);
+        }
+    }
+
+    private void verifyListsCreate(List<String> listString, List<String> listInteger, List<String> floatList,
+                                   Integer recMode, String prefix, String customPath, boolean emptyOrNot) {
+        if (emptyOrNot) {
+            customPath = "";
+        }
+        Path path = null;
+        if (dataType.getIntegerList().getFirst() != null) {
+            path = Paths.get(customPath + typeDataFileConstants.integers());
+            if (prefix != null) {
+                path = Paths.get(customPath + prefix + path.getFileName());
+                //Записать текст в файл
+            }
+            writeTextFiles(listInteger, path, recMode);
+        }
+        //Кастомный путь уже указан выше
+        writeTextFiles(listInteger, path, recMode); //Записать текст в файл
+        if (dataType.getFloatList().getFirst() != null) {
+            path = Paths.get(customPath + typeDataFileConstants.floats()); //Указать кастомный путь
+            if (prefix != null) {
+                path = Paths.get(customPath + prefix + path.getFileName()); //Если есть префикс, добавить его к имени файла
+            }
+            //Нет префикса
+            //Кастомный путь уже указан выше
+            writeTextFiles(listInteger, path, recMode); //Записать текст в файл
+        }
+        if (dataType.getStringList().getFirst() != null) {
+            path = Paths.get(customPath + typeDataFileConstants.string());
+            if (prefix != null) {
+                path = Paths.get(customPath + prefix + path.getFileName());
+            }
+            writeTextFiles(listInteger, path, recMode); //Записать текст в файл
+        }
+    }
+
+
+    private boolean writeTextFiles(List<String> listWithText, Path path, Integer recMode) {
+        try {
+            if (recMode == 0) { // Режим перезапись
+                Files.write(path, listWithText);
+                return true;
+            } else if (recMode == 1) { // Режим добавление в существующий
+                Files.write(path, listWithText, StandardOpenOption.APPEND);
+                return true;
+            }
+            return false;
+        } catch (IOException e) {
+            log.error(e.getMessage() + " " + e.getCause());
+            return false;
+        }
+    }
 
     @Override
     public Integer a(Integer recMode) {
         try {
             checkRecMode(recMode);
         } catch (IncorrectRecExeption e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             return null;
         }
-        if (recMode == 1 && FilesService.recordingMode == 2) {
-            FilesService.recordingMode = 1;
+        if (recMode == 0 && recordingMode == 1) {
+            recordingMode = 1;
             System.out.println("Режим: перезапись");
             return 1;
-        } else if (recMode == 1 && FilesService.recordingMode == 1) {
+        } else if (recMode == 0 && recordingMode == 0) {
             System.out.println("Режим перезаписи уже активен!");
             return 1;
         }
-        if (recMode == 2 && FilesService.recordingMode == 1) {
-            FilesService.recordingMode = 2;
+        if (recMode == 1 && recordingMode == 0) {
+            recordingMode = 1;
             System.out.println("Режим: добавление в существующие");
             return 2;
-        } else if (recMode == 2 && FilesService.recordingMode == 2) {
+        } else if (recMode == 1 && recordingMode == 1) {
             System.out.println("Режим добавления в существующие уже активен!");
             return 2;
         }
@@ -160,12 +187,57 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
     }
 
     @Override
+    public Integer s(String customPath, String prefix) {
+        String[] typeFiles = {typeDataFileConstants.string(), typeDataFileConstants.integers(), typeDataFileConstants.floats()};
+        List<String> list;
+        if (customPath != null) {
+            return additionSymbolsOutcome(customPath, typeFiles);
+        } else {
+            try {
+                customPath = FilesService.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+                return additionSymbolsOutcome(customPath, typeFiles);
+            } catch (URISyntaxException e) {
+                log.error(e.getMessage() + " " + e.getCause());
+            }
+        }
+        return null;
+    }
+
+    private int countCharactersInLine(List<String> list) {
+        int numberCharacters = 0;
+        for (int i = 0; i < list.size(); i++) {
+            numberCharacters += list.get(i).length();
+        }
+        return numberCharacters;
+    }
+
+    private int additionSymbolsOutcome(String paths, String[] typeFiles) {
+        List<String> list;
+        int numberCharacters = 0;
+        try {
+            for (int i = 0; i < 3; i++) {
+                list = (Files.readAllLines(Paths.get(paths + typeFiles[i])));
+                numberCharacters += countCharactersInLine(list);
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage() + " " + e.getCause());
+        }
+        return numberCharacters;
+    }
+
+    @Override
+    public boolean f() {
+        return false;
+    }
+
+    @Override
     public String o(String way) {
         try {
             checkDirectoryToFile(new File(way.trim()));
+            this.wayFileResult = way;
             return way;
         } catch (IncorrectDirectoryExeption e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -174,18 +246,10 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
     public String p(String prefix) {
         try {
             checkPrefixFile(prefix);
+            return prefix;
         } catch (IncorrectPrefixExeption e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             return null;
         }
-        return prefix;
-    }
-
-    public Integer getRecordingMode() {
-        return recordingMode;
-    }
-
-    public void setRecordingMode(Integer recordingMode) {
-        FilesService.recordingMode = recordingMode;
     }
 }
