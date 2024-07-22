@@ -1,8 +1,6 @@
 package genclasses;
 
-import constants.EscapeSequence;
-import constants.SpaceSign;
-import constants.TypeDataFileConstants;
+import constants.ClassConstants;
 import errors.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +20,6 @@ import java.util.*;
 @NoArgsConstructor
 @Slf4j
 public class FilesService implements FileCommands, CheckErrors, FileGenOperation {
-
-    private TypeDataFileConstants typeDataFileConstants = new TypeDataFileConstants("integers.txt",
-            "floats.txt", "strings.txt");
-    private EscapeSequence escapeSequence = new EscapeSequence("\n");
-    private SpaceSign spaceSign = new SpaceSign(" ");
 
     private DataType dataType = new DataType();
     AuxiliaryActions auxiliaryActions = new AuxiliaryActions();
@@ -112,7 +105,7 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
 
     @Override
     public Integer s(String customPath, String prefix) {
-        String[] typeFiles = {typeDataFileConstants.string(), typeDataFileConstants.integers(), typeDataFileConstants.floats()};
+        String[] typeFiles = {ClassConstants.strings, ClassConstants.integers, ClassConstants.floats};
         List<String> list;
         if (customPath != null) {
             return additionSymbolsOutcome(customPath, typeFiles);
@@ -180,7 +173,7 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
     private void saveBuiltTypes(LineType listWithTypes, int sizeCollectionLines, int counterMainCycle) {
         if (listWithTypes.getStringLine() != null && counterMainCycle < sizeCollectionLines - 1) {
 
-            dataType.getStringList().add(listWithTypes.getStringLine() + escapeSequence.escapeSequence());
+            dataType.getStringList().add(listWithTypes.getStringLine() + ClassConstants.escapeSequence);
 
         } else if (counterMainCycle == sizeCollectionLines - 1) {
             dataType.getStringList().add(listWithTypes.getStringLine());
@@ -188,7 +181,7 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
 
         if (listWithTypes.getIntegerNumber() != null && counterMainCycle < sizeCollectionLines - 1) {
 
-            dataType.getStringList().add(String.valueOf(listWithTypes.getIntegerNumber()) + escapeSequence.escapeSequence());
+            dataType.getStringList().add(String.valueOf(listWithTypes.getIntegerNumber()) + ClassConstants.escapeSequence);
 
         } else if (counterMainCycle == sizeCollectionLines - 1) {
             dataType.getStringList().add(String.valueOf(listWithTypes.getIntegerNumber()));
@@ -196,7 +189,7 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
 
         if (listWithTypes.getFraction() != null && counterMainCycle < sizeCollectionLines - 1) {
 
-            dataType.getStringList().add(String.valueOf(listWithTypes.getFraction()) + escapeSequence.escapeSequence());
+            dataType.getStringList().add(String.valueOf(listWithTypes.getFraction()) + ClassConstants.escapeSequence);
 
         } else if (counterMainCycle == sizeCollectionLines - 1) {
             dataType.getStringList().add(String.valueOf(listWithTypes.getFraction()));
@@ -210,7 +203,7 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         }
         Path path = null;
         if (dataType.getIntegerList().getFirst() != null) {
-            path = Paths.get(customPath + typeDataFileConstants.integers());
+            path = Paths.get(customPath + ClassConstants.integers);
             if (prefix != null) {
                 path = Paths.get(customPath + prefix + path.getFileName());
                 //Записать текст в файл
@@ -218,9 +211,8 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             writeTextFiles(listInteger, path, recMode);
         }
         //Кастомный путь уже указан выше
-        writeTextFiles(listInteger, path, recMode); //Записать текст в файл
         if (dataType.getFloatList().getFirst() != null) {
-            path = Paths.get(customPath + typeDataFileConstants.floats()); //Указать кастомный путь
+            path = Paths.get(customPath + ClassConstants.floats); //Указать кастомный путь
             if (prefix != null) {
                 path = Paths.get(customPath + prefix + path.getFileName()); //Если есть префикс, добавить его к имени файла
             }
@@ -229,11 +221,11 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             writeTextFiles(listInteger, path, recMode); //Записать текст в файл
         }
         if (dataType.getStringList().getFirst() != null) {
-            path = Paths.get(customPath + typeDataFileConstants.string());
+            path = Paths.get(customPath + ClassConstants.strings);
             if (prefix != null) {
                 path = Paths.get(customPath + prefix + path.getFileName());
             }
-            writeTextFiles(listInteger, path, recMode); //Записать текст в файл
+            writeTextFiles(listInteger, path, recMode);
         }
     }
 
@@ -242,9 +234,11 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         try {
             if (recMode == 0) { // Режим перезапись
                 Files.write(path, listWithText);
+                dataType.clearAllBufferCollection();
                 return true;
             } else if (recMode == 1) { // Режим добавление в существующий
                 Files.write(path, listWithText, StandardOpenOption.APPEND);
+                dataType.clearAllBufferCollection();
                 return true;
             }
             return false;

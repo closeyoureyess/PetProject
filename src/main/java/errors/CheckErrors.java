@@ -1,14 +1,12 @@
 package errors;
 
-import constants.TypeFileConstants;
+import constants.ClassConstants;
 
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public interface CheckErrors {
-
-    TypeFileConstants stringConstants = new TypeFileConstants(".txt");
 
     default boolean checkRecMode(Integer numberMode) throws IncorrectRecExeption {
         if (numberMode == 1) {
@@ -46,7 +44,7 @@ public interface CheckErrors {
     }
 
     default boolean checkTypeFile(String path) throws IncorrectTypeFileException {
-        if (!path.contains(stringConstants.typeFile())) {
+        if (!path.contains(ClassConstants.typeFile)) {
             throw new IncorrectTypeFileException(DescriptionError.INCORRECT_TYPE_FILE.getNameExeption());
         }
         return true;

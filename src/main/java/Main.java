@@ -20,6 +20,6 @@ public class Main {
         DataType dataType = new DataType();
         operationsFiles.setRecordingMode(0);
 
-        scanner.nextLine();
+        userText = scanner.nextLine();
     }
 }

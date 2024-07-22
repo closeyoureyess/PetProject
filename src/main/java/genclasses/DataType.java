@@ -1,8 +1,5 @@
 package genclasses;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,6 +11,12 @@ public class DataType {
     private static List<String> stringList = new LinkedList<>();
 
     public DataType() {
+    }
+
+    public void clearAllBufferCollection(){
+        integerList.clear();
+        floatList.clear();
+        stringList.clear();
     }
 
     public List<String> getIntegerList() {

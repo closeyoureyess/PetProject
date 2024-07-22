@@ -1,15 +1,15 @@
 package genclasses;
 
+import constants.ClassConstants;
 import errors.CheckErrors;
+import errors.IncorrectDirectoryExeption;
 import errors.IncorrectLineExeption;
+import errors.IncorrectPrefixExeption;
 import lombok.*;
-import lombok.extern.java.Log;
-import lombok.extern.log4j.Log4j;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,4 +87,61 @@ public class AuxiliaryActions implements CheckErrors {
         }
         return Optional.empty();
     }
+
+    public List<?> parseEntranceLine(String initialLine) {
+        FilesService filesService = new FilesService();
+        String[] arraysFromList = initialLine.split(ClassConstants.spaceCharacter);
+        for (int i = 0; i < arraysFromList.length; i++) {
+            if (arraysFromList[i].equals("-a")) {
+
+            } else if (arraysFromList[i].equals("-o")) {
+                try {
+                    if (i < arraysFromList.length - 1) {
+                        checkDirectoryToFile(new File(arraysFromList[i + 1]));
+                    } else if (i == arraysFromList.length - 1) {
+                        return null;
+                    }
+                } catch (IncorrectDirectoryExeption e) {
+                    log.error(e.getMessage() + " " + e.getCause());
+                }
+            } else if (arraysFromList[i].equals("-p")) {
+                try {
+                    if (i < arraysFromList.length - 1) {
+                        checkPrefixFile(arraysFromList[i + 1]);
+                    } else if (i == arraysFromList.length - 1) {
+                        return null;
+                    }
+                } catch (IncorrectPrefixExeption e) {
+                    log.error(e.getMessage() + " " + e.getCause());
+                }
+            } else if (arraysFromList[i].equals("-s")) {
+                //
+            } else if (arraysFromList[i].equals("-f")) {
+                //
+            } else if (arraysFromList[i].contains(ClassConstants.typeFile)) {
+                int amountFiles = initialLine.length() - initialLine.replaceAll(ClassConstants.typeFile, "").length();
+            }
+        }
+    }
+
+    public Integer amountFiles(String elementFromArray, String initialLine) {
+        if (elementFromArray.contains(ClassConstants.typeFile)) {
+            return initialLine.length() - initialLine.replaceAll(ClassConstants.typeFile, "").length();
+        }
+        return null;
+    }
+
+    ^[a-zA-Z]:\\\\(?:[^\\\\/:*?\"<>|]+\\\\)*[^\\\\/:*?\"<>|]+\\.txt$
+    D:\\FolderToCreateFile\\test.txt
+
+    public boolean chooseStatistics(String elementFromArray) {
+        if (elementFromArray.equals("-s")) {
+            return true;
+        } else if (elementFromArray.equals("-f")) {
+            return true;
+        }
+        return false;
+    }
+
+    public
 }
