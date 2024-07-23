@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,10 +23,12 @@ import java.util.*;
 public class FilesService implements FileCommands, CheckErrors, FileGenOperation {
 
     private DataType dataType = new DataType();
-    AuxiliaryActions auxiliaryActions = new AuxiliaryActions();
+    private SupportActionsNumbers supportActionsNumbers = new SupportActionsNumbers();
 
     private String wayFileResult;
     private Integer recordingMode;
+
+    String[] typeFiles = {ClassConstants.strings, ClassConstants.integers, ClassConstants.floats};
 
     @Override
     public List<String> customReadFiles(String way) { // Сохранить эту переменную в List в Main и отдать -s для подсчета
@@ -49,6 +52,7 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
 
     @Override
     public boolean filterFile(List<String> alreadyReadLines) {
+        AuxiliaryActions auxiliaryActions = new AuxiliaryActions();
         // Лист со всем текстом из файла
         for (int i = 0; i < alreadyReadLines.size(); i++) {
             //Строчка из текста, разбитая по пробелу на массив
@@ -66,6 +70,7 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         return true;
     }
 
+    //Процесс записи информации в файл
     @Override
     public void sortedDataToFile(List<String> listString, List<String> listInteger, List<String> floatList,
                                  Integer recMode, String prefix, String customPath) {
@@ -105,24 +110,68 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
 
     @Override
     public Integer s(String customPath, String prefix) {
-        String[] typeFiles = {ClassConstants.strings, ClassConstants.integers, ClassConstants.floats};
         List<String> list;
+        int result;
         if (customPath != null) {
-            return additionSymbolsOutcome(customPath, typeFiles);
+            result = additionSymbolsOutcome(customPath, typeFiles, prefix);
+            System.out.println(result);
+            log.info("Общее кол-во элементов: " + result);
+            return result;
         } else {
             try {
                 customPath = FilesService.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-                return additionSymbolsOutcome(customPath, typeFiles);
+                result = additionSymbolsOutcome(customPath, typeFiles, prefix);
+                log.info("Общее кол-во элементов: " + result);
+                return result;
             } catch (URISyntaxException e) {
                 log.error(e.getMessage() + " " + e.getCause());
+                return null;
             }
         }
-        return null;
     }
 
     @Override
-    public boolean f() {
+    public boolean f(String paths, String[] typeFiles, String prefix) {
+        List<String> listString = new LinkedList<>();
+        List<String> listInteger = new LinkedList<>();
+        List<String> listFloats = new LinkedList<>();
+        for (int i = 0; i < typeFiles.length; i++) {
+            if (i == 0) {
+                listString = cycleReadFiles(paths, typeFiles, prefix, i);
+            } else if (i == 1) {
+                listInteger = cycleReadFiles(paths, typeFiles, prefix, i);
+            } else if (i == 2) {
+                listFloats = cycleReadFiles(paths, typeFiles, prefix, i);
+            }
+        }
+        if (listString != null) {
+            log.info(String.valueOf(fullStatisticsAmountLine(listString)));
+            log.info("Самая короткая строка: " + supportActionsNumbers.minMaxValueIntNumbers(listString, ClassConstants.lessSymbol));
+            log.info("Самая длинная строка: " + supportActionsNumbers.minMaxValueIntNumbers(listString, ClassConstants.moreSymbol));
+            log.info("Минимальное значение среди целых чисел: " + supportActionsNumbers.minMaxValueIntNumbers
+                    (listInteger, ClassConstants.lessSymbol));
+            log.info("Максимальное значение среди целых чисел: " + supportActionsNumbers.minMaxValueIntNumbers
+                    (listInteger, ClassConstants.moreSymbol));
+            log.info("Сумма целых чисел: " + supportActionsNumbers.sumValueNumbers(listInteger));
+            log.info("Среднее арифметическое целых чисел: " + supportActionsNumbers.arithmeticMeanInteger(listInteger));
+            log.info("Минимальное значение среди вещественных чисел: " + supportActionsNumbers.minMaxValueFloatNumbers
+                    (listFloats, ClassConstants.lessSymbol));
+            log.info("Максимальное значение среди вещественных чисел: " + supportActionsNumbers.minMaxValueFloatNumbers
+                    (listFloats, ClassConstants.moreSymbol));
+            log.info("Сумма вещественных чисел: " + supportActionsNumbers.sumValueFloat(listFloats));
+            log.info("Среднее арифметическое целых чисел: " + supportActionsNumbers.arithmeticMeanFloat(listFloats));
+            log.info("Сумма вещественных и целых чисел: " + supportActionsNumbers.sumIntFloatNumber(listFloats, listInteger));
+        }
         return false;
+    }
+
+    //Полная статистика для строк, кол-во строк
+    private int fullStatisticsAmountLine(List<String> listString) {
+        int amountLine = 0;
+        for (String line : listString) {
+            amountLine++;
+        }
+        return amountLine;
     }
 
     @Override
@@ -148,28 +197,58 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         }
     }
 
+    //Перебор строк из документа, подсчет кол-ва символов
     private int countCharactersInLine(List<String> list) {
         int numberCharacters = 0;
+
         for (int i = 0; i < list.size(); i++) {
             numberCharacters += list.get(i).length();
         }
         return numberCharacters;
     }
 
-    private int additionSymbolsOutcome(String paths, String[] typeFiles) {
-        List<String> list;
-        int numberCharacters = 0;
+    //Чтение содержимого файла по обычному пути и по кастомному
+    private List<String> cycleReadFiles(String paths, String[] typeFiles, String prefix, int i, boolean... fFunck) {
+        List<String> list = new LinkedList<>();
         try {
-            for (int i = 0; i < 3; i++) {
-                list = (Files.readAllLines(Paths.get(paths + typeFiles[i])));
-                numberCharacters += countCharactersInLine(list);
+            if (prefix != null) {
+                list = Files.readAllLines(prefixAndNonPrefixPath(paths, typeFiles, prefix, i));
+                return list;
             }
+            list = Files.readAllLines(prefixAndNonPrefixPath(paths, typeFiles, null, i));
         } catch (IOException e) {
             log.error(e.getMessage() + " " + e.getCause());
+        }
+        return list;
+    }
+
+
+    //Main функция метода "S", вызывает предыдущие две, выводит кол-во элементов по каждому файлу
+    private int additionSymbolsOutcome(String paths, String[] typeFiles, String prefix) {
+        List<String> list;
+        int numberCharacters = 0;
+        for (int i = 0; i < 3; i++) {
+            numberCharacters += countCharactersInLine(cycleReadFiles(paths, typeFiles, prefix, i));
+            if (prefix != null) {
+                log.info("Количество, элементов, записанных в файл " +
+                        prefixAndNonPrefixPath(paths, typeFiles, prefix, i).getFileName() + ": " + numberCharacters);
+            } else {
+                log.info("Количество, элементов, записанных в файл " +
+                        prefixAndNonPrefixPath(paths, typeFiles, null, i).getFileName() + ": " + numberCharacters);
+            }
         }
         return numberCharacters;
     }
 
+    private Path prefixAndNonPrefixPath(String paths, String[] typeFiles, String prefix, int i) {
+        if (prefix != null) {
+            return Paths.get(paths + new StringBuilder(prefix).append(typeFiles[i]));
+        } else {
+            return Paths.get(paths + typeFiles[i]);
+        }
+    }
+
+    //Сохранение отфильтрованных данных в листы-прокладки
     private void saveBuiltTypes(LineType listWithTypes, int sizeCollectionLines, int counterMainCycle) {
         if (listWithTypes.getStringLine() != null && counterMainCycle < sizeCollectionLines - 1) {
 
@@ -196,8 +275,9 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         }
     }
 
-    private void verifyListsCreate(List<String> listString, List<String> listInteger, List<String> floatList,
-                                   Integer recMode, String prefix, String customPath, boolean emptyOrNot) {
+    //Проверка путей, куда будем записывать информацию в файлы
+    public void verifyListsCreate(List<String> listString, List<String> listInteger, List<String> floatList,
+                                  Integer recMode, String prefix, String customPath, boolean emptyOrNot) {
         if (emptyOrNot) {
             customPath = "";
         }
@@ -229,7 +309,7 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         }
     }
 
-
+    //Непосредственно запись информации в файлы в режиме перезаписи или добавления в существующий
     private boolean writeTextFiles(List<String> listWithText, Path path, Integer recMode) {
         try {
             if (recMode == 0) { // Режим перезапись

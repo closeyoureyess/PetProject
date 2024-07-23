@@ -9,6 +9,11 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,6 +29,9 @@ public class AuxiliaryActions implements CheckErrors {
     //Зеленый - элемент [3]
     //1234 - элемент [4]
     //Конец массива и т.д
+
+    private DataType dataType = new DataType();
+
     public Optional<LineType> iterationByElementsStringArray(String arraysFromList) {
 
         Optional<LineType> processedValuesList;
@@ -56,7 +64,7 @@ public class AuxiliaryActions implements CheckErrors {
     private Optional<LineType> parseElementsLineFromArray(String line) { //^-?[0-9]*\.[0-9]+(E[+-]?[0-9]+)?$
         LineType lineReturnedObject = new LineType();
 
-        Pattern pattern = Pattern.compile(new String("^-?[0-9]*\\.[0-9]*(E[-]?[0-9]+)?$"));
+        Pattern pattern = Pattern.compile(ClassConstants.regSearchFloat); // ^-?[0-9]*\.[0-9]*(E[-]?[0-9]+)?$
         Matcher matcher = pattern.matcher(line);
         boolean result = matcher.find();
         if (result) {
@@ -64,7 +72,7 @@ public class AuxiliaryActions implements CheckErrors {
             return Optional.of(new LineType(lineReturnedObject.getFraction()));
         }
 
-        pattern = Pattern.compile(new String("^(?!\\.)[а-яА-Яa-zA-Z]*\\.$|^[а-яА-Яa-zA-Z]+$"));
+        pattern = Pattern.compile(ClassConstants.regSearchString); // ^(?!.*\.\d*)[+-]?\d+$
         matcher = pattern.matcher(String.valueOf(line.trim().charAt(0)));
         result = matcher.find();
         if (result) {
@@ -72,7 +80,7 @@ public class AuxiliaryActions implements CheckErrors {
             return Optional.of(new LineType(lineReturnedObject.getStringLine()));
         }
 
-        pattern = Pattern.compile(new String("^(?!.*\\.\\d*)[+-]?\\d+$\n"));
+        pattern = Pattern.compile(ClassConstants.regSearchInteger); // ^(?!\.)[а-яА-Яa-zA-Z]*\.$|^[а-яА-Яa-zA-Z]+$
         matcher = pattern.matcher(String.valueOf(line.charAt(0)));
         result = matcher.find();
         if (result) {
@@ -122,6 +130,7 @@ public class AuxiliaryActions implements CheckErrors {
                 int amountFiles = initialLine.length() - initialLine.replaceAll(ClassConstants.typeFile, "").length();
             }
         }
+        return null;
     }
 
     public Integer amountFiles(String elementFromArray, String initialLine) {
@@ -131,17 +140,14 @@ public class AuxiliaryActions implements CheckErrors {
         return null;
     }
 
-    ^[a-zA-Z]:\\\\(?:[^\\\\/:*?\"<>|]+\\\\)*[^\\\\/:*?\"<>|]+\\.txt$
-    D:\\FolderToCreateFile\\test.txt
-
-    public boolean chooseStatistics(String elementFromArray) {
+    /*public List<Integer> chooseStatistics(String elementFromArray) {
         if (elementFromArray.equals("-s")) {
-            return true;
+            List<>
+            return ;
         } else if (elementFromArray.equals("-f")) {
-            return true;
+            return 2;
         }
-        return false;
+        return 0;
     }
-
-    public
+    */
 }

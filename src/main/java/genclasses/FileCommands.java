@@ -3,7 +3,7 @@ package genclasses;
 public interface FileCommands {
     Integer s(String path, String prefix);  // Статистика краткая
 
-    boolean f(); // Статистика полная
+    boolean f(String paths, String[] typeFiles, String prefix); // Статистика полная
 
     Integer a(Integer recMode); // Режим записи/перезаписи в файлы
 
