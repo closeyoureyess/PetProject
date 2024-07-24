@@ -9,6 +9,6 @@ public interface FileGenOperation {
 
     boolean filterFile(List<String> alreadyReadLines); //Отфильтровать все строки, которые взяли из файла
 
-    void sortedDataToFile(List<String> listString, List<String> listInteger,
+    boolean sortedDataToFile(List<String> listString, List<String> listInteger,
                           List<String> floatList, Integer recMode, String prefix, String customPath);
 }

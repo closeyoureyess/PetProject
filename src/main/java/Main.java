@@ -1,20 +1,20 @@
 import constants.ClassConstants;
-import genclasses.AuxiliaryActions;
 import genclasses.DataType;
 import genclasses.FilesService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
 public class Main {
     public static void main(String[] args) {
+        Pattern pattern = Pattern.compile(".*\\\\$");
         Scanner scanner = new Scanner(System.in);
         FilesService filesService = new FilesService();
-        filesService.setRecordingMode(1);
+        filesService.setRecordingMode(0);
+        int localRecordMode = 0;
         boolean running = true;
 
         while (running) {
@@ -27,17 +27,30 @@ public class Main {
                 continue;
             }
 
+            if (!pattern.matcher(input).find()) {
+                log.error("Строка должна начинаться с одной из команд(-а -f и т.д, без запятых)");
+                continue;
+            }
+
             // Разбираем команду
-            String[] tokens = input.split(" ");
-            String path = null;
+            int beSkippedElementArray = 0;
+            String[] userInput = input.split(" ");
+            String pathToBeginningFile = null;
+            String customPathForSave = null;
             String prefix = null;
             boolean statisticsShort = false;
             boolean statisticsFull = false;
             boolean appendMode = false;
             boolean overwriteMode = false;
+            DataType dataType = new DataType();
 
-            for (int i = 0; i < tokens.length; i++) {
-                switch (tokens[i]) {
+            for (int i = 0; i < userInput.length; i++) {
+                if (beSkippedElementArray > 0) {
+                    beSkippedElementArray = 0;
+                    continue;
+                }
+                int newI;
+                switch (userInput[i]) {
                     case "-s":
                         statisticsShort = true;
                         break;
@@ -49,16 +62,38 @@ public class Main {
                         break;
                     case "-o":
                         overwriteMode = true;
+                        if (i + 1 < userInput.length) {
+                            newI = ++i;
+                        } else {
+                            newI = i;
+                        }
+                        if (filesService.o(userInput[newI]) != null) {
+                            customPathForSave = userInput[newI];
+                        } else {
+                            customPathForSave = null;
+                        }
+                        newI = 0;
+                        beSkippedElementArray++;
                         break;
                     case "-p":
-                        if (i + 1 < tokens.length) {
-                            prefix = tokens[++i];
-                            filesService.p(prefix); // Устанавливаем префикс
+                        if (i + 1 < userInput.length) {
+                            newI = ++i;
+                        } else {
+                            newI = i;
                         }
+                        if (filesService.p(userInput[newI]) != null) { // Устанавливаем префикс
+                            prefix = userInput[newI];
+                        } else {
+                            prefix = null;
+                        }
+                        newI = 0;
+                        beSkippedElementArray++;
                         break;
                     default:
-                        if (path == null) {
-                            path = tokens[i]; // Первый не опциональный токен будет путём
+                        if (userInput[i].contains(ClassConstants.typeFile)) {
+                            pathToBeginningFile = userInput[i];
+                        } else {
+                            pathToBeginningFile = null;
                         }
                         break;
                 }
@@ -66,29 +101,68 @@ public class Main {
 
             // Устанавливаем режим записи
             if (appendMode && overwriteMode) {
-                System.out.println("Нельзя установить одновременно режим добавления и перезаписи.");
+                log.error("Ошибка: попытка выбрать режим добавления в существующий файл и указание нового пути для файла");
+                continue;
+            }
+
+            List<String> listWithText;
+            if (pathToBeginningFile != null) {
+                listWithText = filesService.customReadFiles(pathToBeginningFile);
+            } else {
+                continue;
+            }
+
+            boolean resultFilterFile;
+            if (listWithText != null) {
+                resultFilterFile = filesService.filterFile(listWithText);
+            } else {
+                continue;
+            }
+
+            if (!resultFilterFile) {
                 continue;
             }
 
             if (appendMode) {
-                filesService.a(1); // Устанавливаем режим добавления
-            } else if (overwriteMode) {
-                filesService.a(0); // Устанавливаем режим перезаписи
+                filesService.setRecordingMode(1);
+                // Устанавливаем режим добавления
+            } else {
+                filesService.setRecordingMode(0);
+            }
+
+            if (overwriteMode && customPathForSave == null) {
+                log.error("Кастомный путь указан некорректно");
+                continue;
+            }
+
+            if (prefix == null) {
+                log.error("Префикс для файла указан некорректно");
+                continue;
+            }
+
+            boolean resultWriteText = filesService.sortedDataToFile(dataType.getStringList(), dataType.getIntegerList(), dataType.getFloatList(),
+                    filesService.getRecordingMode(), prefix, customPathForSave);
+
+            if(!resultWriteText){
+                log.error("Ошибка в процессе записи информации в файл");
+                continue;
             }
 
             if (statisticsShort) {
-                if (path != null) {
-                    filesService.s(path, prefix);
+                if (pathToBeginningFile != null) {
+                    filesService.s(pathToBeginningFile, prefix);
                 } else {
-                    System.out.println("Не указан путь к файлу для статистики.");
+                    log.error("Ошибка при попытке подсчитать краткую статистику");
+                    continue;
                 }
             }
 
             if (statisticsFull) {
-                if (path != null) {
-                    filesService.f(path, new String[]{".txt"}, prefix);
+                if (pathToBeginningFile != null) {
+                    filesService.f(pathToBeginningFile, ClassConstants.typeFilesArray, prefix);
                 } else {
-                    System.out.println("Не указан путь к файлу для полной статистики.");
+                    log.error("Ошибка при попытке подсчитать полную статистику");
+                    continue;
                 }
             }
         }
@@ -96,6 +170,11 @@ public class Main {
         scanner.close();
     }
 
+    /*if (appendMode) {
+                filesService.a(1); // Устанавливаем режим добавления
+            } else if (overwriteMode) {
+                filesService.a(0); // Устанавливаем режим перезаписи
+            }*/
         /*int a;
         int j;
         String userText;
