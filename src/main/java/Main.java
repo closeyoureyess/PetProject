@@ -3,18 +3,20 @@ import genclasses.DataType;
 import genclasses.FilesService;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Slf4j
 public class Main {
     public static void main(String[] args) {
-        Pattern pattern = Pattern.compile(".*\\\\$");
+        Pattern pattern = Pattern.compile(ClassConstants.regLineBeginCommand);
         Scanner scanner = new Scanner(System.in);
         FilesService filesService = new FilesService();
+        DataType dataType = new DataType();
         filesService.setRecordingMode(0);
+        LinkedList<String> fifoFiles = new LinkedList<>();
         int localRecordMode = 0;
+        int iterationCounter = 0;
         boolean running = true;
 
         while (running) {
@@ -23,7 +25,7 @@ public class Main {
 
             if (input.equalsIgnoreCase("exit")) {
                 running = false;
-                System.out.println("Завершение работы.");
+                log.info("Off...");
                 continue;
             }
 
@@ -35,6 +37,7 @@ public class Main {
             // Разбираем команду
             int beSkippedElementArray = 0;
             String[] userInput = input.split(" ");
+
             String pathToBeginningFile = null;
             String customPathForSave = null;
             String prefix = null;
@@ -42,13 +45,12 @@ public class Main {
             boolean statisticsFull = false;
             boolean appendMode = false;
             boolean overwriteMode = false;
-            DataType dataType = new DataType();
 
             for (int i = 0; i < userInput.length; i++) {
-                if (beSkippedElementArray > 0) {
+               /* if (beSkippedElementArray > 0) {
                     beSkippedElementArray = 0;
                     continue;
-                }
+                }*/
                 int newI;
                 switch (userInput[i]) {
                     case "-s":
@@ -69,11 +71,9 @@ public class Main {
                         }
                         if (filesService.o(userInput[newI]) != null) {
                             customPathForSave = userInput[newI];
-                        } else {
-                            customPathForSave = null;
                         }
                         newI = 0;
-                        beSkippedElementArray++;
+                        /*beSkippedElementArray++;*/
                         break;
                     case "-p":
                         if (i + 1 < userInput.length) {
@@ -87,11 +87,13 @@ public class Main {
                             prefix = null;
                         }
                         newI = 0;
-                        beSkippedElementArray++;
+                        /*beSkippedElementArray++;*/
                         break;
                     default:
                         if (userInput[i].contains(ClassConstants.typeFile)) {
                             pathToBeginningFile = userInput[i];
+                            System.out.println(pathToBeginningFile);
+                            fifoFiles.add(pathToBeginningFile);
                         } else {
                             pathToBeginningFile = null;
                         }
@@ -105,68 +107,69 @@ public class Main {
                 continue;
             }
 
-            List<String> listWithText;
-            if (pathToBeginningFile != null) {
-                listWithText = filesService.customReadFiles(pathToBeginningFile);
-            } else {
-                continue;
-            }
 
-            boolean resultFilterFile;
-            if (listWithText != null) {
-                resultFilterFile = filesService.filterFile(listWithText);
-            } else {
-                continue;
-            }
-
-            if (!resultFilterFile) {
-                continue;
-            }
-
-            if (appendMode) {
-                filesService.setRecordingMode(1);
-                // Устанавливаем режим добавления
-            } else {
-                filesService.setRecordingMode(0);
-            }
-
-            if (overwriteMode && customPathForSave == null) {
-                log.error("Кастомный путь указан некорректно");
-                continue;
-            }
-
-            if (prefix == null) {
-                log.error("Префикс для файла указан некорректно");
-                continue;
-            }
-
-            boolean resultWriteText = filesService.sortedDataToFile(dataType.getStringList(), dataType.getIntegerList(), dataType.getFloatList(),
-                    filesService.getRecordingMode(), prefix, customPathForSave);
-
-            if(!resultWriteText){
-                log.error("Ошибка в процессе записи информации в файл");
-                continue;
-            }
-
-            if (statisticsShort) {
+            while (!fifoFiles.isEmpty()) {
+                List<String> listWithText;
                 if (pathToBeginningFile != null) {
-                    filesService.s(pathToBeginningFile, prefix);
+                    listWithText = filesService.customReadFiles(fifoFiles.poll());
                 } else {
-                    log.error("Ошибка при попытке подсчитать краткую статистику");
                     continue;
                 }
-            }
 
-            if (statisticsFull) {
-                if (pathToBeginningFile != null) {
-                    filesService.f(pathToBeginningFile, ClassConstants.typeFilesArray, prefix);
+                boolean resultFilterFile;
+                if (listWithText != null) {
+                    resultFilterFile = filesService.filterFile(listWithText);
                 } else {
-                    log.error("Ошибка при попытке подсчитать полную статистику");
                     continue;
                 }
+
+                if (!resultFilterFile) {
+                    continue;
+                }
+
+                if (appendMode && iterationCounter > 0) {
+                    filesService.a(1);
+                    // Устанавливаем режим добавления
+                } else {
+                    filesService.setRecordingMode(0);
+                }
+
+                if (overwriteMode && customPathForSave == null) {
+                    log.error("Кастомный путь указан некорректно");
+                    continue;
+                }
+
+                if (prefix == null) {
+                    log.error("Префикс для файла указан некорректно");
+                    continue;
+                }
+
+                filesService.sortedDataToFile(dataType.getStringList(), dataType.getIntegerList(), dataType.getFloatList(),
+                        filesService.getRecordingMode(), prefix, customPathForSave);
+
+                if (statisticsShort) {
+                    if (pathToBeginningFile != null) {
+                        filesService.s(customPathForSave, prefix);
+                    } else {
+                        log.error("Ошибка при попытке подсчитать краткую статистику");
+                        continue;
+                    }
+                }
+
+                if (statisticsFull) {
+                    boolean resultF = false;
+                    if (pathToBeginningFile != null) {
+                        resultF = filesService.f(pathToBeginningFile, ClassConstants.typeFilesArray, prefix);
+                    }
+                    if (!resultF) {
+                        log.error("Ошибка при попытке подсчитать полную статистику");
+                        continue;
+                    }
+                }
+                iterationCounter++;
             }
+            dataType.clearAllBufferCollection();
         }
-
         scanner.close();
     }
 

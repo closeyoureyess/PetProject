@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -69,12 +68,12 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
 
     //Процесс записи информации в файл
     @Override
-    public boolean sortedDataToFile(List<String> listString, List<String> listInteger, List<String> floatList,
-                                    Integer recMode, String prefix, String customPath) {
+    public void sortedDataToFile(List<String> listString, List<String> listInteger, List<String> floatList,
+                                 Integer recMode, String prefix, String customPath) {
         if (customPath != null) {
-            return verifyListsCreate(listString, listInteger, floatList, recMode, prefix, customPath, false);
+            verifyListsCreate(listString, listInteger, floatList, recMode, prefix, customPath, false);
         } else {
-            return verifyListsCreate(listString, listInteger, floatList, recMode, prefix, customPath, true);
+            verifyListsCreate(listString, listInteger, floatList, recMode, prefix, customPath, true);
         }
     }
 
@@ -111,20 +110,19 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         int result;
         if (customPath != null) {
             result = additionSymbolsOutcome(customPath, ClassConstants.typeFilesArray, prefix);
-            System.out.println(result);
             log.info("Общее кол-во элементов: " + result);
             return result;
         } else {
-            try {
-                customPath = FilesService.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-                customPath = customPath.substring(customPath.indexOf("/") + 1);
-                result = additionSymbolsOutcome(customPath, ClassConstants.typeFilesArray, prefix);
-                log.info("Общее кол-во элементов: " + result);
-                return result;
-            } catch (URISyntaxException e) {
+            /*try {*/
+                /*customPath = FilesService.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+                customPath = customPath.substring(customPath.indexOf("/") + 1);*/
+            result = additionSymbolsOutcome(customPath, ClassConstants.typeFilesArray, prefix);
+            log.info("Общее кол-во элементов: " + result);
+            return result;
+            /*} catch (URISyntaxException e) {
                 log.error(e.getMessage() + " " + e.getCause());
                 return null;
-            }
+            }*/
         }
     }
 
@@ -224,11 +222,24 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
     //Main функция метода "S", вызывает предыдущие две, выводит кол-во элементов по каждому файлу
     private int additionSymbolsOutcome(String paths, String[] typeFiles, String prefix) {
         int numberCharacters = 0;
+        int personalNumberCharacters = 0;
+        List<String> localList;
         for (int i = 0; i < 3; i++) {
-            numberCharacters += countCharactersInLine(cycleReadFiles(paths, typeFiles, prefix, i));
+            localList = cycleReadFiles(paths, typeFiles, prefix, i);
+            numberCharacters += countCharactersInLine(localList);
             if (prefix != null) {
+                if (i == 0) {
+                    personalNumberCharacters = numberCharacters;
+                }
+                if (i == 1) {
+                    personalNumberCharacters = personalNumberCharacters - numberCharacters;
+                }
+                if (i == 2) {
+                    personalNumberCharacters = personalNumberCharacters - numberCharacters;
+                }
+                personalNumberCharacters = Math.abs(personalNumberCharacters);
                 log.info("Количество, элементов, записанных в файл " +
-                        prefixAndNonPrefixPath(paths, typeFiles, prefix, i).getFileName() + ": " + numberCharacters);
+                        prefixAndNonPrefixPath(paths, typeFiles, prefix, i).getFileName() + ": " + personalNumberCharacters);
             } else {
                 log.info("Количество, элементов, записанных в файл " +
                         prefixAndNonPrefixPath(paths, typeFiles, null, i).getFileName() + ": " + numberCharacters);
@@ -238,8 +249,14 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
     }
 
     private Path prefixAndNonPrefixPath(String paths, String[] typeFiles, String prefix, int i) {
+        if (paths == null) {
+            paths = "";
+        }
         if (prefix != null) {
-            return Paths.get(paths + new StringBuilder(prefix).append(typeFiles[i]));
+            System.out.println(Paths.get(String.valueOf(new StringBuilder(paths).append(new StringBuilder(prefix)
+                    .append(typeFiles[i])))));
+            return Paths.get(String.valueOf(new StringBuilder(paths).append(new StringBuilder(prefix)
+                    .append(typeFiles[i]))));
         } else {
             return Paths.get(paths + typeFiles[i]);
         }
@@ -249,62 +266,61 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
     private void saveBuiltTypes(LineType listWithTypes, int sizeCollectionLines, int counterMainCycle) {
         if (listWithTypes.getStringLine() != null && counterMainCycle < sizeCollectionLines - 1) {
 
-            dataType.getStringList().add(listWithTypes.getStringLine() + ClassConstants.escapeSequence);
+            dataType.getStringList().add(listWithTypes.getStringLine());
 
-        } else if (counterMainCycle == sizeCollectionLines - 1) {
+        } else if (listWithTypes.getStringLine() != null && counterMainCycle == sizeCollectionLines - 1) {
             dataType.getStringList().add(listWithTypes.getStringLine());
         }
 
         if (listWithTypes.getIntegerNumber() != null && counterMainCycle < sizeCollectionLines - 1) {
 
-            dataType.getStringList().add(String.valueOf(listWithTypes.getIntegerNumber()) + ClassConstants.escapeSequence);
+            dataType.getIntegerList().add(String.valueOf(listWithTypes.getIntegerNumber()));
 
-        } else if (counterMainCycle == sizeCollectionLines - 1) {
-            dataType.getStringList().add(String.valueOf(listWithTypes.getIntegerNumber()));
+        } else if (listWithTypes.getIntegerNumber() != null && counterMainCycle == sizeCollectionLines - 1) {
+            dataType.getIntegerList().add(String.valueOf(listWithTypes.getIntegerNumber()));
         }
 
         if (listWithTypes.getFraction() != null && counterMainCycle < sizeCollectionLines - 1) {
 
-            dataType.getStringList().add(String.valueOf(listWithTypes.getFraction()) + ClassConstants.escapeSequence);
+            dataType.getFloatList().add(String.valueOf(listWithTypes.getFraction()));
 
-        } else if (counterMainCycle == sizeCollectionLines - 1) {
-            dataType.getStringList().add(String.valueOf(listWithTypes.getFraction()));
+        } else if (listWithTypes.getFraction() != null && counterMainCycle == sizeCollectionLines - 1) {
+            dataType.getFloatList().add(String.valueOf(listWithTypes.getFraction()));
         }
     }
 
     //Проверка путей, куда будем записывать информацию в файлы
-    private boolean verifyListsCreate(List<String> listString, List<String> listInteger, List<String> listFloat,
-                                  Integer recMode, String prefix, String customPath, boolean emptyOrNot) {
+    private void verifyListsCreate(List<String> listString, List<String> listInteger, List<String> listFloat,
+                                   Integer recMode, String prefix, String customPath, boolean emptyOrNot) {
         if (emptyOrNot) {
             customPath = "";
         }
         Path path;
-        if (dataType.getIntegerList().getFirst() != null) {
+        if (!dataType.getIntegerList().isEmpty()) {
             path = Paths.get(customPath + ClassConstants.integers);
             if (prefix != null) {
                 path = Paths.get(customPath + prefix + path.getFileName());
                 //Записать текст в файл
             }
-            return writeTextFiles(listInteger, path, recMode);
+            writeTextFiles(listInteger, path, recMode);
         }
         //Кастомный путь уже указан выше
-        if (dataType.getFloatList().getFirst() != null) {
+        if (!dataType.getFloatList().isEmpty()) {
             path = Paths.get(customPath + ClassConstants.floats); //Указать кастомный путь
             if (prefix != null) {
                 path = Paths.get(customPath + prefix + path.getFileName()); //Если есть префикс, добавить его к имени файла
             }
             //Нет префикса
             //Кастомный путь уже указан выше
-            return writeTextFiles(listFloat, path, recMode); //Записать текст в файл
+            writeTextFiles(listFloat, path, recMode); //Записать текст в файл
         }
-        if (dataType.getStringList().getFirst() != null) {
+        if (!dataType.getStringList().isEmpty()) {
             path = Paths.get(customPath + ClassConstants.strings);
             if (prefix != null) {
                 path = Paths.get(customPath + prefix + path.getFileName());
             }
-            return writeTextFiles(listString, path, recMode);
+            writeTextFiles(listString, path, recMode);
         }
-        return false;
     }
 
     //Непосредственно запись информации в файлы в режиме перезаписи или добавления в существующий
@@ -312,16 +328,14 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         try {
             if (recMode == 0) { // Режим перезапись
                 Files.write(path, listWithText);
-                dataType.clearAllBufferCollection();
                 return true;
             } else if (recMode == 1) { // Режим добавление в существующий
                 Files.write(path, listWithText, StandardOpenOption.APPEND);
-                dataType.clearAllBufferCollection();
                 return true;
             }
             return false;
         } catch (IOException e) {
-            log.error(e.getMessage() + " " + e.getCause());
+            log.error(e.getMessage());
             return false;
         }
     }

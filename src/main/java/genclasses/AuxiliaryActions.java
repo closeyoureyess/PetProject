@@ -9,11 +9,6 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,10 +56,12 @@ public class AuxiliaryActions implements CheckErrors {
     }
 
     //Проверка, что в элементе из массива, строка? целое число? дробь?
-    private Optional<LineType> parseElementsLineFromArray(String line) { //^-?[0-9]*\.[0-9]+(E[+-]?[0-9]+)?$
+    private Optional<LineType> parseElementsLineFromArray(String line) {
         LineType lineReturnedObject = new LineType();
 
-        Pattern pattern = Pattern.compile(ClassConstants.regSearchFloat); // ^-?[0-9]*\.[0-9]*(E[-]?[0-9]+)?$
+        line = line.trim();
+
+        Pattern pattern = Pattern.compile(ClassConstants.regSearchFloat);
         Matcher matcher = pattern.matcher(line);
         boolean result = matcher.find();
         if (result) {
@@ -72,7 +69,7 @@ public class AuxiliaryActions implements CheckErrors {
             return Optional.of(new LineType(lineReturnedObject.getFraction()));
         }
 
-        pattern = Pattern.compile(ClassConstants.regSearchString); // ^(?!.*\.\d*)[+-]?\d+$
+        pattern = Pattern.compile(ClassConstants.regSearchString);
         matcher = pattern.matcher(String.valueOf(line.trim().charAt(0)));
         result = matcher.find();
         if (result) {
@@ -80,8 +77,8 @@ public class AuxiliaryActions implements CheckErrors {
             return Optional.of(new LineType(lineReturnedObject.getStringLine()));
         }
 
-        pattern = Pattern.compile(ClassConstants.regSearchInteger); // ^(?!\.)[а-яА-Яa-zA-Z]*\.$|^[а-яА-Яa-zA-Z]+$
-        matcher = pattern.matcher(String.valueOf(line.charAt(0)));
+        pattern = Pattern.compile(ClassConstants.regSearchInteger);
+        matcher = pattern.matcher(String.valueOf(line));
         result = matcher.find();
         if (result) {
             lineReturnedObject.setIntegerNumber(Integer.valueOf(line));

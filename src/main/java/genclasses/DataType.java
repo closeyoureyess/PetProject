@@ -19,27 +19,27 @@ public class DataType {
         stringList.clear();
     }
 
-    public List<String> getIntegerList() {
+    public static List<String> getIntegerList() {
         return integerList;
     }
 
-    public void setIntegerList(List<String> integerList) {
+    public static void setIntegerList(List<String> integerList) {
         DataType.integerList = integerList;
     }
 
-    public List<String> getFloatList() {
+    public static List<String> getFloatList() {
         return floatList;
     }
 
-    public void setFloatList(List<String> floatList) {
+    public static void setFloatList(List<String> floatList) {
         DataType.floatList = floatList;
     }
 
-    public List<String> getStringList() {
+    public static List<String> getStringList() {
         return stringList;
     }
 
-    public void setStringList(List<String> stringList) {
+    public static void setStringList(List<String> stringList) {
         DataType.stringList = stringList;
     }
 }

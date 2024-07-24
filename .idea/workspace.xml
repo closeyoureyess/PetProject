@@ -4,25 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ae75da64-d89e-4b9d-9d5b-07b8d40fda93" name="Changes" comment="master - added createNewFile method and rework method filterFile">
+    <list default="true" id="ae75da64-d89e-4b9d-9d5b-07b8d40fda93" name="Changes" comment="master - pri-final stage">
       <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/constants/EscapeSequence.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/constants/SpaceSign.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/genclasses/LineType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/archetype-resources/pom.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/resources/archetype-resources/src/main/java/App.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/resources/archetype-resources/src/test/java/AppTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/TrashClass.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/constants/CharConstants.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/constants/ClassConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/constants/ClassConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/constants/EscapeSequence.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/constants/SpaceSign.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/constants/StringConstants.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/constants/TypeDataFileConstants.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/constants/TypeFileConstants.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/errors/DescriptionError.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/errors/DescriptionError.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/AuxiliaryActions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/AuxiliaryActions.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/DataType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/DataType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/FileCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/FileCommands.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/FileGenOperation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/FileGenOperation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/FilesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/FilesService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/GeneralOperations.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/LineType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/LineType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/ReturnedObject.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -42,9 +45,6 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="MavenRunner">
-    <option name="skipTests" value="true" />
-  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -54,35 +54,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.MyTestTask3 [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.MyTestTask3 [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.MyTestTask3 [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.MyTestTask3 [site].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.MyTestTask3 [test].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.MyTestTask3 [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.MyTestTask3 [verify].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/vadim/.jdks/graalvm-jdk-21.0.4/bin&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
+    "Maven.MyTestTask3 [clean].executor": "Run",
+    "Maven.MyTestTask3 [compile].executor": "Run",
+    "Maven.MyTestTask3 [deploy].executor": "Run",
+    "Maven.MyTestTask3 [install].executor": "Run",
+    "Maven.MyTestTask3 [package].executor": "Run",
+    "Maven.MyTestTask3 [site].executor": "Run",
+    "Maven.MyTestTask3 [test].executor": "Run",
+    "Maven.MyTestTask3 [validate].executor": "Run",
+    "Maven.MyTestTask3 [verify].executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/vadim/.jdks/graalvm-jdk-21.0.4/bin",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="jdk-21.0.2-graalvm-jdk-21.0.2-f644763e9732-f81af680" />
-      </set>
-    </attachedChunks>
-  </component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -108,7 +103,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721552557281</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="master - pri-final stage">
+      <option name="closed" value="true" />
+      <created>1721825368579</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1721825368579</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -124,6 +127,26 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="master - added createNewFile method and rework method filterFile" />
-    <option name="LAST_COMMIT_MESSAGE" value="master - added createNewFile method and rework method filterFile" />
+    <MESSAGE value="master - pri-final stage" />
+    <option name="LAST_COMMIT_MESSAGE" value="master - pri-final stage" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/Main.java</url>
+          <line>146</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="input" />
+        <watch expression="path" />
+        <watch expression="path" />
+        <watch expression="path" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
