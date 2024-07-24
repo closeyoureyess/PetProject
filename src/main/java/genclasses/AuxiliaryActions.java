@@ -9,6 +9,8 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,15 +36,14 @@ public class AuxiliaryActions implements CheckErrors {
 
         processedValuesList = parseElementsLineFromArray(arraysFromList);
 
-        if (processedValuesList.isPresent() && processedValuesList.get().getIntegerNumber()
+        if (processedValuesList.isPresent() && processedValuesList.get().getBigIntegerNumber()
                 != null) {
 
-            return Optional.of(new LineType(processedValuesList.get().getIntegerNumber()));
+            return Optional.of(new LineType(processedValuesList.get().getBigIntegerNumber()));
 
-        } else if (processedValuesList.isPresent() && processedValuesList.get().getFraction()
-                != null) {
+        } else if (processedValuesList.isPresent() && processedValuesList.get().getBigDecimalFraction() != null) {
 
-            return Optional.of(new LineType(processedValuesList.get().getFraction()));
+            return Optional.of(new LineType(processedValuesList.get().getBigDecimalFraction()));
 
         } else if (processedValuesList.isPresent() && processedValuesList.get().getStringLine()
                 != null) {
@@ -65,8 +66,8 @@ public class AuxiliaryActions implements CheckErrors {
         Matcher matcher = pattern.matcher(line);
         boolean result = matcher.find();
         if (result) {
-            lineReturnedObject.setFraction(Float.valueOf(line));
-            return Optional.of(new LineType(lineReturnedObject.getFraction()));
+            lineReturnedObject.setBigDecimalFraction(new BigDecimal(line));
+            return Optional.of(new LineType(lineReturnedObject.getBigDecimalFraction()));
         }
 
         pattern = Pattern.compile(ClassConstants.regSearchString);
@@ -78,11 +79,11 @@ public class AuxiliaryActions implements CheckErrors {
         }
 
         pattern = Pattern.compile(ClassConstants.regSearchInteger);
-        matcher = pattern.matcher(String.valueOf(line));
+        matcher = pattern.matcher(line);
         result = matcher.find();
         if (result) {
-            lineReturnedObject.setIntegerNumber(Integer.valueOf(line));
-            return Optional.of(new LineType(lineReturnedObject.getIntegerNumber()));
+            lineReturnedObject.setBigIntegerNumber(new BigInteger(line));
+            return Optional.of(new LineType(lineReturnedObject.getBigIntegerNumber()));
         }
         try {
             checkIncorrectLine(result);

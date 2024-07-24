@@ -57,7 +57,7 @@ public class SupportActionsNumbers {
         }
         Optional<LineType> lineTypeObject = auxiliaryActions.iterationByElementsStringArray(listIntOrStr.getFirst());
         List<Integer> intList = new LinkedList<>();
-        if (lineTypeObject.get().getIntegerNumber() != null) {
+        if (lineTypeObject.get().getBigIntegerNumber() != null) {
             intList = listIntOrStr.stream()
                     .map(Integer::valueOf)
                     .toList();

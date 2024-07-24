@@ -24,7 +24,7 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
     private SupportActionsNumbers supportActionsNumbers = new SupportActionsNumbers();
 
     private String wayFileResult;
-    private Integer recordingMode;
+    private static Integer recordingMode;
 
     @Override
     public List<String> customReadFiles(String way) { // Сохранить эту переменную в List в Main и отдать -s для подсчета
@@ -272,20 +272,20 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             dataType.getStringList().add(listWithTypes.getStringLine());
         }
 
-        if (listWithTypes.getIntegerNumber() != null && counterMainCycle < sizeCollectionLines - 1) {
+        if (listWithTypes.getBigIntegerNumber() != null && counterMainCycle < sizeCollectionLines - 1) {
 
-            dataType.getIntegerList().add(String.valueOf(listWithTypes.getIntegerNumber()));
+            dataType.getIntegerList().add(String.valueOf(listWithTypes.getBigIntegerNumber()));
 
-        } else if (listWithTypes.getIntegerNumber() != null && counterMainCycle == sizeCollectionLines - 1) {
-            dataType.getIntegerList().add(String.valueOf(listWithTypes.getIntegerNumber()));
+        } else if (listWithTypes.getBigIntegerNumber() != null && counterMainCycle == sizeCollectionLines - 1) {
+            dataType.getIntegerList().add(String.valueOf(listWithTypes.getBigIntegerNumber()));
         }
 
-        if (listWithTypes.getFraction() != null && counterMainCycle < sizeCollectionLines - 1) {
+        if (listWithTypes.getBigDecimalFraction() != null && counterMainCycle < sizeCollectionLines - 1) {
 
-            dataType.getFloatList().add(String.valueOf(listWithTypes.getFraction()));
+            dataType.getFloatList().add(String.valueOf(listWithTypes.getBigDecimalFraction()));
 
-        } else if (listWithTypes.getFraction() != null && counterMainCycle == sizeCollectionLines - 1) {
-            dataType.getFloatList().add(String.valueOf(listWithTypes.getFraction()));
+        } else if (listWithTypes.getBigDecimalFraction() != null && counterMainCycle == sizeCollectionLines - 1) {
+            dataType.getFloatList().add(String.valueOf(listWithTypes.getBigDecimalFraction()));
         }
     }
 
@@ -338,5 +338,13 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             log.error(e.getMessage());
             return false;
         }
+    }
+
+    public static Integer getRecordingMode() {
+        return recordingMode;
+    }
+
+    public static void setRecordingMode(Integer recordingMode) {
+        FilesService.recordingMode = recordingMode;
     }
 }

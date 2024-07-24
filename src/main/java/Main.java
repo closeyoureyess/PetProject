@@ -13,7 +13,8 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         FilesService filesService = new FilesService();
         DataType dataType = new DataType();
-        filesService.setRecordingMode(0);
+        FilesService.setRecordingMode(0);
+        Integer recordingMode = 0;
         LinkedList<String> fifoFiles = new LinkedList<>();
         int localRecordMode = 0;
         int iterationCounter = 0;
@@ -109,6 +110,7 @@ public class Main {
 
 
             while (!fifoFiles.isEmpty()) {
+                dataType.clearAllBufferCollection();
                 List<String> listWithText;
                 if (pathToBeginningFile != null) {
                     listWithText = filesService.customReadFiles(fifoFiles.poll());
@@ -128,10 +130,11 @@ public class Main {
                 }
 
                 if (appendMode && iterationCounter > 0) {
-                    filesService.a(1);
+                    recordingMode = filesService.a(1);
                     // Устанавливаем режим добавления
                 } else {
-                    filesService.setRecordingMode(0);
+                    recordingMode = 0;
+                    FilesService.setRecordingMode(0);
                 }
 
                 if (overwriteMode && customPathForSave == null) {
@@ -145,7 +148,7 @@ public class Main {
                 }
 
                 filesService.sortedDataToFile(dataType.getStringList(), dataType.getIntegerList(), dataType.getFloatList(),
-                        filesService.getRecordingMode(), prefix, customPathForSave);
+                        FilesService.getRecordingMode(), prefix, customPathForSave);
 
                 if (statisticsShort) {
                     if (pathToBeginningFile != null) {
@@ -168,7 +171,6 @@ public class Main {
                 }
                 iterationCounter++;
             }
-            dataType.clearAllBufferCollection();
         }
         scanner.close();
     }

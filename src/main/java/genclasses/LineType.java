@@ -3,30 +3,33 @@ package genclasses;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 @Getter
 @Setter
 public class LineType {
 
     private String stringLine;
-    private Integer integerNumber;
-    private Float fraction;
+    private BigInteger bigIntegerNumber;
+    private BigDecimal bigDecimalFraction;
 
-    public LineType(String stringLine, Integer integerNumber, Float fraction) {
+    public LineType(String stringLine, BigInteger bigIntegerNumber, BigDecimal bigDecimalFraction) {
         this.stringLine = stringLine;
-        this.integerNumber = integerNumber;
-        this.fraction = fraction;
+        this.bigIntegerNumber = bigIntegerNumber;
+        this.bigDecimalFraction = bigDecimalFraction;
     }
 
     public LineType(String stringLine) {
         this.stringLine = stringLine;
     }
 
-    public LineType(Integer integerNumber) {
-        this.integerNumber = integerNumber;
+    public LineType(BigInteger bigIntegerNumber) {
+        this.bigIntegerNumber = bigIntegerNumber;
     }
 
-    public LineType(Float fraction) {
-        this.fraction = fraction;
+    public LineType(BigDecimal bigDecimalFraction) {
+        this.bigDecimalFraction = bigDecimalFraction;
     }
 
     public LineType() {
