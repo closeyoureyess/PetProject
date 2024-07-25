@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ae75da64-d89e-4b9d-9d5b-07b8d40fda93" name="Changes" comment="master - pri-final stage">
+    <list default="true" id="ae75da64-d89e-4b9d-9d5b-07b8d40fda93" name="Changes" comment="master">
       <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/resources/archetype-resources/src/main/java/App.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/resources/archetype-resources/src/test/java/AppTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/TrashClass.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/constants/CharConstants.java" beforeDir="false" />
@@ -19,14 +18,11 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/constants/StringConstants.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/constants/TypeDataFileConstants.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/constants/TypeFileConstants.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/errors/DescriptionError.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/errors/DescriptionError.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/AuxiliaryActions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/AuxiliaryActions.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/DataType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/DataType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/FileGenOperation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/FileGenOperation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/FilesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/FilesService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/GeneralOperations.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/LineType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/LineType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/ReturnedObject.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/SupportActionsNumbers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/SupportActionsNumbers.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +41,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -56,7 +55,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Main.executor": "Run",
+    "Application.Main.executor": "Debug",
     "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
     "Maven.MyTestTask3 [clean].executor": "Run",
     "Maven.MyTestTask3 [compile].executor": "Run",
@@ -111,7 +110,31 @@
       <option name="project" value="LOCAL" />
       <updated>1721825368579</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="master - #2pre-final stage">
+      <option name="closed" value="true" />
+      <created>1721849124246</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1721849124246</updated>
+    </task>
+    <task id="LOCAL-00005" summary="master - fixed bugs with duplicates in result txt">
+      <option name="closed" value="true" />
+      <created>1721855964265</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1721855964265</updated>
+    </task>
+    <task id="LOCAL-00006" summary="master">
+      <option name="closed" value="true" />
+      <created>1721889588377</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1721889588377</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -128,15 +151,18 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="master - added createNewFile method and rework method filterFile" />
     <MESSAGE value="master - pri-final stage" />
-    <option name="LAST_COMMIT_MESSAGE" value="master - pri-final stage" />
+    <MESSAGE value="master - #2pre-final stage" />
+    <MESSAGE value="master - fixed bugs with duplicates in result txt" />
+    <MESSAGE value="master" />
+    <option name="LAST_COMMIT_MESSAGE" value="master" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/Main.java</url>
-          <line>146</line>
-          <option name="timeStamp" value="22" />
+          <line>21</line>
+          <option name="timeStamp" value="38" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -146,6 +172,9 @@
         <watch expression="path" />
         <watch expression="path" />
         <watch expression="path" />
+        <watch expression="input" />
+        <watch expression="input" />
+        <watch expression="listWithText" />
       </configuration>
     </watches-manager>
   </component>

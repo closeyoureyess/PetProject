@@ -24,7 +24,6 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
     private SupportActionsNumbers supportActionsNumbers = new SupportActionsNumbers();
 
     private String wayFileResult;
-    private static Integer recordingMode;
 
     @Override
     public List<String> customReadFiles(String way) { // Сохранить эту переменную в List в Main и отдать -s для подсчета
@@ -56,7 +55,6 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
                     .iterationByElementsStringArray(alreadyReadLines.get(i));
 
             if (optionalLineType.isPresent()) {
-
                 saveBuiltTypes(optionalLineType.get(), alreadyReadLines.size(), i);
             } else {
                 return false;
@@ -84,19 +82,19 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             log.error(e.getMessage());
             return null;
         }
-        if (recMode == 0 && recordingMode == 1) {
-            this.recordingMode = 0;
+        if (recMode == 0 && dataType.getRecordingMode() == 1) {
+            dataType.setRecordingMode(0);
             log.info("Режим: перезапись");
             return 0;
-        } else if (recMode == 0 && recordingMode == 0) {
+        } else if (recMode == 0 && dataType.getRecordingMode() == 0) {
             log.warn("Режим перезаписи уже активен!");
             return 0;
         }
-        if (recMode == 1 && recordingMode == 0) {
-            this.recordingMode = 1;
+        if (recMode == 1 && dataType.getRecordingMode() == 0) {
+            dataType.setRecordingMode(1);
             log.info("Режим: добавление в существующие");
             return 1;
-        } else if (recMode == 1 && recordingMode == 1) {
+        } else if (recMode == 1 && dataType.getRecordingMode() == 1) {
             log.warn("Режим добавления в существующие уже активен!");
             return 1;
         }
@@ -108,12 +106,18 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         List<String> list;
         int result;
         if (customPath != null) {
-            result = additionSymbolsOutcome(customPath, ClassConstants.typeFilesArray, prefix);
-            log.info("Общее кол-во элементов: " + result);
+            result = additionSymbolsOutcome(String.valueOf(new StringBuilder(customPath).append("/")),
+                    ClassConstants.typeFilesArray, prefix);
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                log.error(e.getMessage() + " " + e.getCause());
+            }
+            log.info("Общее кол-во элементов: " + result + ClassConstants.escapeSequence);
             return result;
         } else {
             result = additionSymbolsOutcome(customPath, ClassConstants.typeFilesArray, prefix);
-            log.info("Общее кол-во элементов: " + result);
+            log.info("Общее кол-во элементов: " + result + ClassConstants.escapeSequence);
             return result;
         }
     }
@@ -133,22 +137,27 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             }
         }
         if (listString != null) {
-            log.info(String.valueOf(fullStatisticsAmountLine(listString)));
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                log.error(e.getMessage() + " " + e.getCause());
+            }
             log.info("Самая короткая строка: " + supportActionsNumbers.minMaxValueIntNumbers(listString, ClassConstants.lessSymbol));
             log.info("Самая длинная строка: " + supportActionsNumbers.minMaxValueIntNumbers(listString, ClassConstants.moreSymbol));
+            log.info("Количество строк: " + dataType.getStringList().size() + ClassConstants.escapeSequence);
             log.info("Минимальное значение среди целых чисел: " + supportActionsNumbers.minMaxValueIntNumbers
                     (listInteger, ClassConstants.lessSymbol));
             log.info("Максимальное значение среди целых чисел: " + supportActionsNumbers.minMaxValueIntNumbers
                     (listInteger, ClassConstants.moreSymbol));
             log.info("Сумма целых чисел: " + supportActionsNumbers.sumValueNumbers(listInteger));
-            log.info("Среднее арифметическое целых чисел: " + supportActionsNumbers.arithmeticMeanInteger(listInteger));
+            log.info("Среднее арифметическое целых чисел: " + supportActionsNumbers.arithmeticMeanInteger(listInteger) + ClassConstants.escapeSequence);
             log.info("Минимальное значение среди вещественных чисел: " + supportActionsNumbers.minMaxValueFloatNumbers
                     (listFloats, ClassConstants.lessSymbol));
             log.info("Максимальное значение среди вещественных чисел: " + supportActionsNumbers.minMaxValueFloatNumbers
                     (listFloats, ClassConstants.moreSymbol));
             log.info("Сумма вещественных чисел: " + supportActionsNumbers.sumValueFloat(listFloats));
-            log.info("Среднее арифметическое целых чисел: " + supportActionsNumbers.arithmeticMeanBigDecimal(listFloats));
-            log.info("Сумма вещественных и целых чисел: " + supportActionsNumbers.sumIntFloatNumber(listFloats, listInteger));
+            log.info("Среднее арифметическое вещественных чисел: " + supportActionsNumbers.arithmeticMeanBigDecimal(listFloats));
+            log.info("Сумма вещественных и целых чисел: " + supportActionsNumbers.sumIntFloatNumber(listFloats, listInteger) + ClassConstants.escapeSequence);
         }
         return false;
     }
@@ -211,29 +220,31 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
     private int additionSymbolsOutcome(String paths, String[] typeFiles, String prefix) {
         int numberCharacters = 0;
         int personalNumberCharacters = 0;
+        int sumAllCharacter = 0;
         List<String> localList;
         for (int i = 0; i < 3; i++) {
             localList = cycleReadFiles(paths, typeFiles, prefix, i);
-            numberCharacters += countCharactersInLine(localList);
+            numberCharacters = countCharactersInLine(localList);
+            sumAllCharacter += numberCharacters;
             if (prefix != null) {
-                if (i == 0) {
-                    personalNumberCharacters = numberCharacters;
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    log.error(e.getMessage() + " " + e.getCause());
                 }
-                if (i == 1) {
-                    personalNumberCharacters = personalNumberCharacters - numberCharacters;
-                }
-                if (i == 2) {
-                    personalNumberCharacters = personalNumberCharacters - numberCharacters;
-                }
-                personalNumberCharacters = Math.abs(personalNumberCharacters);
                 log.info("Количество, элементов, записанных в файл " +
-                        prefixAndNonPrefixPath(paths, typeFiles, prefix, i).getFileName() + ": " + personalNumberCharacters);
+                        prefixAndNonPrefixPath(paths, typeFiles, prefix, i).getFileName() + ": " + numberCharacters);
             } else {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    log.error(e.getMessage() + " " + e.getCause());
+                }
                 log.info("Количество, элементов, записанных в файл " +
                         prefixAndNonPrefixPath(paths, typeFiles, null, i).getFileName() + ": " + numberCharacters);
             }
         }
-        return numberCharacters;
+        return sumAllCharacter;
     }
 
     private Path prefixAndNonPrefixPath(String paths, String[] typeFiles, String prefix, int i) {
@@ -241,10 +252,7 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             paths = "";
         }
         if (prefix != null) {
-            System.out.println("TESTOVII " + Paths.get(String.valueOf(new StringBuilder(paths).append(new StringBuilder(prefix)
-                    .append(typeFiles[i])))));
-            return Paths.get(String.valueOf(new StringBuilder(paths).append(new StringBuilder(prefix)
-                    .append(typeFiles[i]))));
+            return Paths.get(paths + "/" + prefix + typeFiles[i]);
         } else {
             return Paths.get(paths + typeFiles[i]);
         }
@@ -280,39 +288,48 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
                                    Integer recMode, String prefix, String customPath, boolean emptyOrNot) {
         if (emptyOrNot) {
             customPath = "";
+        } else {
+            customPath = String.valueOf(new StringBuilder(customPath).append("/"));
         }
-        Path path;
         if (!dataType.getIntegerList().isEmpty()) {
-            path = Paths.get(customPath + ClassConstants.integers);
+            Path path = null;
             if (prefix != null) {
-                path = Paths.get(customPath + prefix + path.getFileName());
+                path = Paths.get(customPath + prefix + ClassConstants.integers);
+            } else if (prefix == null) {
+                prefix = "";
+                path = Paths.get(customPath + ClassConstants.integers);
             }
-            writeTextFiles(listInteger, path, recMode);
+            writeTextFiles(listInteger, path, recMode, prefix + ClassConstants.integers);
         }
         if (!dataType.getFloatList().isEmpty()) {
-            path = Paths.get(customPath + ClassConstants.floats);
+            Path path = null;
             if (prefix != null) {
-                path = Paths.get(customPath + prefix + path.getFileName());
+                path = Paths.get(customPath + prefix + ClassConstants.floats);
+            } else if (prefix == null) {
+                path = Paths.get(customPath + ClassConstants.floats);
             }
-
-            writeTextFiles(listFloat, path, recMode);
+            writeTextFiles(listFloat, path, recMode, prefix + ClassConstants.floats);
         }
         if (!dataType.getStringList().isEmpty()) {
-            path = Paths.get(customPath + ClassConstants.strings);
+            Path path = null;
             if (prefix != null) {
-                path = Paths.get(customPath + prefix + path.getFileName());
+                path = Paths.get(customPath + prefix + ClassConstants.strings);
+            } else if (prefix == null) {
+                path = Paths.get(customPath + ClassConstants.strings);
             }
-            writeTextFiles(listString, path, recMode);
+            writeTextFiles(listString, path, recMode, prefix + ClassConstants.strings);
         }
     }
 
-    private boolean writeTextFiles(List<String> listWithText, Path path, Integer recMode) {
+    private boolean writeTextFiles(List<String> listWithText, Path path, Integer recMode, String nameFile) {
         try {
-            if (recMode == 0) {
+            if (recMode == 0 ) {
                 Files.write(path, listWithText);
+                log.info("MODE:OVERWRITING");
                 return true;
-            } else if (recMode == 1) {
+            } else if (recMode == 1 ) {
                 Files.write(path, listWithText, StandardOpenOption.APPEND);
+                log.info("MODE: APPEND");
                 return true;
             }
             return false;
@@ -320,13 +337,5 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             log.error(e.getMessage());
             return false;
         }
-    }
-
-    public static Integer getRecordingMode() {
-        return recordingMode;
-    }
-
-    public static void setRecordingMode(Integer recordingMode) {
-        FilesService.recordingMode = recordingMode;
     }
 }

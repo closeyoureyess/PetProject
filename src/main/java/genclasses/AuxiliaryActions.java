@@ -18,15 +18,6 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 @Slf4j
 public class AuxiliaryActions implements CheckErrors {
-
-    //Итерация по строчке, перебор всех элементов массиве String[] по порядку, начиная с 0
-    //У - элемент [0]
-    //Лукоморья - элемент [1]
-    //Дуб - элемент [2]
-    //Зеленый - элемент [3]
-    //1234 - элемент [4]
-    //Конец массива и т.д
-
     private DataType dataType = new DataType();
 
     public Optional<LineType> iterationByElementsStringArray(String arraysFromList) {
@@ -56,7 +47,6 @@ public class AuxiliaryActions implements CheckErrors {
         return Optional.empty();
     }
 
-    //Проверка, что в элементе из массива, строка? целое число? дробь?
     private Optional<LineType> parseElementsLineFromArray(String line) {
         LineType lineReturnedObject = new LineType();
 
@@ -93,59 +83,4 @@ public class AuxiliaryActions implements CheckErrors {
         }
         return Optional.empty();
     }
-
-    public List<?> parseEntranceLine(String initialLine) {
-        FilesService filesService = new FilesService();
-        String[] arraysFromList = initialLine.split(ClassConstants.spaceCharacter);
-        for (int i = 0; i < arraysFromList.length; i++) {
-            if (arraysFromList[i].equals("-a")) {
-
-            } else if (arraysFromList[i].equals("-o")) {
-                try {
-                    if (i < arraysFromList.length - 1) {
-                        checkDirectoryToFile(new File(arraysFromList[i + 1]));
-                    } else if (i == arraysFromList.length - 1) {
-                        return null;
-                    }
-                } catch (IncorrectDirectoryExeption e) {
-                    log.error(e.getMessage() + " " + e.getCause());
-                }
-            } else if (arraysFromList[i].equals("-p")) {
-                try {
-                    if (i < arraysFromList.length - 1) {
-                        checkPrefixFile(arraysFromList[i + 1]);
-                    } else if (i == arraysFromList.length - 1) {
-                        return null;
-                    }
-                } catch (IncorrectPrefixExeption e) {
-                    log.error(e.getMessage() + " " + e.getCause());
-                }
-            } else if (arraysFromList[i].equals("-s")) {
-                //
-            } else if (arraysFromList[i].equals("-f")) {
-                //
-            } else if (arraysFromList[i].contains(ClassConstants.typeFile)) {
-                int amountFiles = initialLine.length() - initialLine.replaceAll(ClassConstants.typeFile, "").length();
-            }
-        }
-        return null;
-    }
-
-    public Integer amountFiles(String elementFromArray, String initialLine) {
-        if (elementFromArray.contains(ClassConstants.typeFile)) {
-            return initialLine.length() - initialLine.replaceAll(ClassConstants.typeFile, "").length();
-        }
-        return null;
-    }
-
-    /*public List<Integer> chooseStatistics(String elementFromArray) {
-        if (elementFromArray.equals("-s")) {
-            List<>
-            return ;
-        } else if (elementFromArray.equals("-f")) {
-            return 2;
-        }
-        return 0;
-    }
-    */
 }
