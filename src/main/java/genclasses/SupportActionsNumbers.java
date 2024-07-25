@@ -3,33 +3,45 @@ package genclasses;
 import constants.ClassConstants;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class SupportActionsNumbers {
-    public BigDecimal sumIntFloatNumber(List<String> listFloat, List<String> listInt){
-        return BigDecimal.valueOf(sumValueFloat(listFloat)).add(BigDecimal.valueOf(sumValueNumbers(listInt)));
+    public BigInteger sumIntFloatNumber(List<String> listFloat, List<String> listInt) {
+        return sumValueFloat(listFloat).toBigInteger().add(sumValueNumbers(listInt));
     }
 
-    public Integer arithmeticMeanInteger(List<String> listIntegerOrFloat) {
-        return sumValueNumbers(listIntegerOrFloat) / listIntegerOrFloat.size();
+    public BigInteger arithmeticMeanInteger(List<String> listIntegerOrFloat) {
+        BigInteger result = null;
+        if (!listIntegerOrFloat.isEmpty()) {
+            result = sumValueNumbers(listIntegerOrFloat).divide(BigInteger.valueOf(listIntegerOrFloat.size()));
+        }
+        return result;
     }
 
-    public Float arithmeticMeanFloat(List<String> listIntegerOrFloat) {
-        return sumValueFloat(listIntegerOrFloat) / listIntegerOrFloat.size();
+    public BigDecimal arithmeticMeanBigDecimal(List<String> listIntegerOrFloat) {
+        BigDecimal result = null;
+        if (!listIntegerOrFloat.isEmpty()) {
+            result = sumValueFloat(listIntegerOrFloat).divide(BigDecimal.valueOf(listIntegerOrFloat.size()),
+                    9, RoundingMode.HALF_UP);
+        }
+        return result;
     }
 
-    public Integer sumValueNumbers(List<String> listInt) {
-        Integer localInteger = 0;
+    public BigInteger sumValueNumbers(List<String> listInt) {
+        BigInteger localInteger = BigInteger.valueOf(0);
         for (String number : listInt) {
-            localInteger += Integer.valueOf(number);
+            localInteger = localInteger.add(new BigInteger(number));
         }
         return localInteger;
     }
 
-    public Float sumValueFloat(List<String> listFloat) {
-        Float localFloat = 0F;
+    public BigDecimal sumValueFloat(List<String> listFloat) {
+        BigDecimal localFloat = BigDecimal.valueOf(0F);
         for (String number : listFloat) {
-            localFloat = Float.sum(Float.valueOf(number), localFloat);
+            localFloat.add(new BigDecimal(number));
+            localFloat = localFloat.add(new BigDecimal(number));
         }
         return localFloat;
     }
@@ -50,29 +62,29 @@ public class SupportActionsNumbers {
         return null;
     }
 
-    public Integer minMaxValueIntNumbers(List<String> listIntOrStr, char symbolCompare) {
+    public BigInteger minMaxValueIntNumbers(List<String> listIntOrStr, char symbolCompare) {
         AuxiliaryActions auxiliaryActions = new AuxiliaryActions();
         if (listIntOrStr == null || listIntOrStr.isEmpty()) {
             return null;
         }
         Optional<LineType> lineTypeObject = auxiliaryActions.iterationByElementsStringArray(listIntOrStr.getFirst());
-        List<Integer> intList = new LinkedList<>();
+        List<Long> intList = new LinkedList<>();
         if (lineTypeObject.get().getBigIntegerNumber() != null) {
-            intList = listIntOrStr.stream()
-                    .map(Integer::valueOf)
-                    .toList();
+            for (String s : listIntOrStr){
+                intList.add(Long.valueOf(s));
+            }
         }
         if (!intList.isEmpty()) {
             if (symbolCompare == ClassConstants.lessSymbol) {
-                return Collections.min(intList);
+                return BigInteger.valueOf(Collections.min(intList));
             } else if (symbolCompare == ClassConstants.moreSymbol) {
-                return Collections.max(intList);
+                return BigInteger.valueOf(Collections.max(intList));
             }
         } else if (lineTypeObject.get().getStringLine() != null) {
             if (symbolCompare == ClassConstants.lessSymbol) {
-                return Collections.min(listIntOrStr, Comparator.comparingInt(String::length)).length();
+                return BigInteger.valueOf(Collections.min(listIntOrStr, Comparator.comparingInt(String::length)).length());
             } else if (symbolCompare == ClassConstants.moreSymbol) {
-                return Collections.max(listIntOrStr, Comparator.comparingInt(String::length)).length();
+                return BigInteger.valueOf(Collections.max(listIntOrStr, Comparator.comparingLong(String::length)).length());
             }
         }
         return null;

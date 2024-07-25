@@ -49,15 +49,14 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
     @Override
     public boolean filterFile(List<String> alreadyReadLines) {
         AuxiliaryActions auxiliaryActions = new AuxiliaryActions();
-        // Лист со всем текстом из файла
+
         for (int i = 0; i < alreadyReadLines.size(); i++) {
-            //Строчка из текста, разбитая по пробелу на массив
-            /*String[] arraysFromList = alreadyReadLines.get(i).split(escapeSequence.escapeSequence());*/
+
             Optional<LineType> optionalLineType = auxiliaryActions
                     .iterationByElementsStringArray(alreadyReadLines.get(i));
-            //Определить, что вернулся не null
+
             if (optionalLineType.isPresent()) {
-                //Собрать элементы в полноценное предложение
+
                 saveBuiltTypes(optionalLineType.get(), alreadyReadLines.size(), i);
             } else {
                 return false;
@@ -113,16 +112,9 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             log.info("Общее кол-во элементов: " + result);
             return result;
         } else {
-            /*try {*/
-                /*customPath = FilesService.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-                customPath = customPath.substring(customPath.indexOf("/") + 1);*/
             result = additionSymbolsOutcome(customPath, ClassConstants.typeFilesArray, prefix);
             log.info("Общее кол-во элементов: " + result);
             return result;
-            /*} catch (URISyntaxException e) {
-                log.error(e.getMessage() + " " + e.getCause());
-                return null;
-            }*/
         }
     }
 
@@ -155,7 +147,7 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             log.info("Максимальное значение среди вещественных чисел: " + supportActionsNumbers.minMaxValueFloatNumbers
                     (listFloats, ClassConstants.moreSymbol));
             log.info("Сумма вещественных чисел: " + supportActionsNumbers.sumValueFloat(listFloats));
-            log.info("Среднее арифметическое целых чисел: " + supportActionsNumbers.arithmeticMeanFloat(listFloats));
+            log.info("Среднее арифметическое целых чисел: " + supportActionsNumbers.arithmeticMeanBigDecimal(listFloats));
             log.info("Сумма вещественных и целых чисел: " + supportActionsNumbers.sumIntFloatNumber(listFloats, listInteger));
         }
         return false;
@@ -193,7 +185,6 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         }
     }
 
-    //Перебор строк из документа, подсчет кол-ва символов
     private int countCharactersInLine(List<String> list) {
         int numberCharacters = 0;
 
@@ -203,7 +194,6 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         return numberCharacters;
     }
 
-    //Чтение содержимого файла по обычному пути и по кастомному
     private List<String> cycleReadFiles(String paths, String[] typeFiles, String prefix, int i, boolean... fFunck) {
         List<String> list = new LinkedList<>();
         try {
@@ -218,8 +208,6 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         return list;
     }
 
-
-    //Main функция метода "S", вызывает предыдущие две, выводит кол-во элементов по каждому файлу
     private int additionSymbolsOutcome(String paths, String[] typeFiles, String prefix) {
         int numberCharacters = 0;
         int personalNumberCharacters = 0;
@@ -253,7 +241,7 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             paths = "";
         }
         if (prefix != null) {
-            System.out.println(Paths.get(String.valueOf(new StringBuilder(paths).append(new StringBuilder(prefix)
+            System.out.println("TESTOVII " + Paths.get(String.valueOf(new StringBuilder(paths).append(new StringBuilder(prefix)
                     .append(typeFiles[i])))));
             return Paths.get(String.valueOf(new StringBuilder(paths).append(new StringBuilder(prefix)
                     .append(typeFiles[i]))));
@@ -262,7 +250,6 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         }
     }
 
-    //Сохранение отфильтрованных данных в листы-прокладки
     private void saveBuiltTypes(LineType listWithTypes, int sizeCollectionLines, int counterMainCycle) {
         if (listWithTypes.getStringLine() != null && counterMainCycle < sizeCollectionLines - 1) {
 
@@ -289,7 +276,6 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         }
     }
 
-    //Проверка путей, куда будем записывать информацию в файлы
     private void verifyListsCreate(List<String> listString, List<String> listInteger, List<String> listFloat,
                                    Integer recMode, String prefix, String customPath, boolean emptyOrNot) {
         if (emptyOrNot) {
@@ -300,19 +286,16 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
             path = Paths.get(customPath + ClassConstants.integers);
             if (prefix != null) {
                 path = Paths.get(customPath + prefix + path.getFileName());
-                //Записать текст в файл
             }
             writeTextFiles(listInteger, path, recMode);
         }
-        //Кастомный путь уже указан выше
         if (!dataType.getFloatList().isEmpty()) {
-            path = Paths.get(customPath + ClassConstants.floats); //Указать кастомный путь
+            path = Paths.get(customPath + ClassConstants.floats);
             if (prefix != null) {
-                path = Paths.get(customPath + prefix + path.getFileName()); //Если есть префикс, добавить его к имени файла
+                path = Paths.get(customPath + prefix + path.getFileName());
             }
-            //Нет префикса
-            //Кастомный путь уже указан выше
-            writeTextFiles(listFloat, path, recMode); //Записать текст в файл
+
+            writeTextFiles(listFloat, path, recMode);
         }
         if (!dataType.getStringList().isEmpty()) {
             path = Paths.get(customPath + ClassConstants.strings);
@@ -323,13 +306,12 @@ public class FilesService implements FileCommands, CheckErrors, FileGenOperation
         }
     }
 
-    //Непосредственно запись информации в файлы в режиме перезаписи или добавления в существующий
     private boolean writeTextFiles(List<String> listWithText, Path path, Integer recMode) {
         try {
-            if (recMode == 0) { // Режим перезапись
+            if (recMode == 0) {
                 Files.write(path, listWithText);
                 return true;
-            } else if (recMode == 1) { // Режим добавление в существующий
+            } else if (recMode == 1) {
                 Files.write(path, listWithText, StandardOpenOption.APPEND);
                 return true;
             }

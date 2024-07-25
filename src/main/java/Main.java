@@ -74,7 +74,6 @@ public class Main {
                             customPathForSave = userInput[newI];
                         }
                         newI = 0;
-                        /*beSkippedElementArray++;*/
                         break;
                     case "-p":
                         if (i + 1 < userInput.length) {
@@ -88,6 +87,7 @@ public class Main {
                             prefix = null;
                         }
                         newI = 0;
+                        System.out.println("PREFIX " + prefix);
                         /*beSkippedElementArray++;*/
                         break;
                     default:
@@ -103,7 +103,7 @@ public class Main {
             }
 
             // Устанавливаем режим записи
-            if (appendMode && overwriteMode) {
+            if (appendMode && overwriteMode && iterationCounter <= 0) {
                 log.error("Ошибка: попытка выбрать режим добавления в существующий файл и указание нового пути для файла");
                 continue;
             }
@@ -111,9 +111,10 @@ public class Main {
 
             while (!fifoFiles.isEmpty()) {
                 dataType.clearAllBufferCollection();
+                pathToBeginningFile = fifoFiles.poll();
                 List<String> listWithText;
                 if (pathToBeginningFile != null) {
-                    listWithText = filesService.customReadFiles(fifoFiles.poll());
+                    listWithText = filesService.customReadFiles(pathToBeginningFile);
                 } else {
                     continue;
                 }
@@ -162,11 +163,7 @@ public class Main {
                 if (statisticsFull) {
                     boolean resultF = false;
                     if (pathToBeginningFile != null) {
-                        resultF = filesService.f(pathToBeginningFile, ClassConstants.typeFilesArray, prefix);
-                    }
-                    if (!resultF) {
-                        log.error("Ошибка при попытке подсчитать полную статистику");
-                        continue;
+                        resultF = filesService.f(customPathForSave, ClassConstants.typeFilesArray, prefix);
                     }
                 }
                 iterationCounter++;
@@ -174,37 +171,4 @@ public class Main {
         }
         scanner.close();
     }
-
-    /*if (appendMode) {
-                filesService.a(1); // Устанавливаем режим добавления
-            } else if (overwriteMode) {
-                filesService.a(0); // Устанавливаем режим перезаписи
-            }*/
-        /*int a;
-        int j;
-        String userText;
-        String customPath = null;
-        String prefix = null;
-        Integer recMode = null;
-        Scanner scanner = new Scanner(System.in);
-        FilesService operationsFiles = new FilesService();
-        DataType dataType = new DataType();
-        AuxiliaryActions auxiliaryActions = new AuxiliaryActions();
-        operationsFiles.setRecordingMode(0);
-        Integer chooseStatistics;
-
-        userText = scanner.nextLine();
-
-        String[] arraysFromList = userText.split(ClassConstants.spaceCharacter);
-        Pattern pattern = Pattern.compile(".*\\\\$");
-        String s;
-        for (int i = 0; i < arraysFromList.length; i++) {
-
-            if (arraysFromList[i].contains("\\")) {
-                if(pattern.matcher(arraysFromList[i]).find()) {
-                    s = arraysFromList[i].substring(arraysFromList[i].lastIndexOf("\\") + 1, arraysFromList[i].lastIndexOf(" "));
-                }
-            }
-        }*/
-    /*+ " " + a.contains("\\");*/
 }
