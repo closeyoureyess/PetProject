@@ -55,8 +55,4 @@ public interface CheckErrors {
             throw new IncorrectLineExeption(DescriptionError.INCORRECT_FORM_TEXT.getNameExeption());
         }
     }
-
-    default void checkIncorrectPath() {
-
-    }
 }

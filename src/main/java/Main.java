@@ -1,4 +1,5 @@
 import constants.ClassConstants;
+import errors.CheckErrors;
 import genclasses.DataType;
 import genclasses.FilesService;
 import lombok.extern.slf4j.Slf4j;
@@ -7,20 +8,23 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class Main {
+public class Main implements CheckErrors {
     public static void main(String[] args) {
         Pattern pattern = Pattern.compile(ClassConstants.regLineBeginCommand);
         Scanner scanner = new Scanner(System.in);
         FilesService filesService = new FilesService();
         DataType dataType = new DataType();
-        FilesService.setRecordingMode(0);
-        Integer recordingMode = 0;
+        dataType.setRecordingMode(0);
         LinkedList<String> fifoFiles = new LinkedList<>();
-        int localRecordMode = 0;
         int iterationCounter = 0;
         boolean running = true;
 
         while (running) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                log.error(e.getMessage() + " " + e.getCause());
+            }
             System.out.println("Введите команду:");
             String input = scanner.nextLine().trim();
 
@@ -30,8 +34,12 @@ public class Main {
                 continue;
             }
 
-            if (!pattern.matcher(input).find()) {
-                log.error("Строка должна начинаться с одной из команд(-а -f и т.д, без запятых)");
+            if (!pattern.matcher(input).find() &&
+                    !Pattern.compile(ClassConstants.regLineBeginFileDirectory).matcher(input).find()
+                    && !(input.contains(ClassConstants.typeFile) && !input.contains(ClassConstants.slash))) {
+                log.error("Возникла ошибка!\n1. Строка должна начинаться либо с одной из команд(-а -f и т.д, без запятых)\n" +
+                        "2. Либо же, содержать себе путь к файлу в виде классического пути файловой директории(D:/Папка/Файл.txt и т.д)\n" +
+                        "3. Либо же, в строке должно быть просто имя текстового файла с расширением, если .txt содержится в той же директории, что и файл с программой");
                 continue;
             }
 
@@ -48,10 +56,6 @@ public class Main {
             boolean overwriteMode = false;
 
             for (int i = 0; i < userInput.length; i++) {
-               /* if (beSkippedElementArray > 0) {
-                    beSkippedElementArray = 0;
-                    continue;
-                }*/
                 int newI;
                 switch (userInput[i]) {
                     case "-s":
@@ -87,13 +91,10 @@ public class Main {
                             prefix = null;
                         }
                         newI = 0;
-                        System.out.println("PREFIX " + prefix);
-                        /*beSkippedElementArray++;*/
                         break;
                     default:
                         if (userInput[i].contains(ClassConstants.typeFile)) {
                             pathToBeginningFile = userInput[i];
-                            System.out.println(pathToBeginningFile);
                             fifoFiles.add(pathToBeginningFile);
                         } else {
                             pathToBeginningFile = null;
@@ -102,14 +103,19 @@ public class Main {
                 }
             }
 
-            // Устанавливаем режим записи
-            if (appendMode && overwriteMode && iterationCounter <= 0) {
-                log.error("Ошибка: попытка выбрать режим добавления в существующий файл и указание нового пути для файла");
-                continue;
-            }
-
-
             while (!fifoFiles.isEmpty()) {
+
+                if (appendMode && overwriteMode && iterationCounter <= 0) {
+                    appendMode = false;
+                    log.info("Попытка выбрать режим добавления в существующий файл и указание нового пути для файла. " +
+                            "Выбран режим перезаписи результатов.");
+                    continue;
+                } else if (!appendMode && iterationCounter > 0) {
+                    appendMode = true;
+                    filesService.a(1);
+                }
+
+
                 dataType.clearAllBufferCollection();
                 pathToBeginningFile = fifoFiles.poll();
                 List<String> listWithText;
@@ -130,14 +136,6 @@ public class Main {
                     continue;
                 }
 
-                if (appendMode && iterationCounter > 0) {
-                    recordingMode = filesService.a(1);
-                    // Устанавливаем режим добавления
-                } else {
-                    recordingMode = 0;
-                    FilesService.setRecordingMode(0);
-                }
-
                 if (overwriteMode && customPathForSave == null) {
                     log.error("Кастомный путь указан некорректно");
                     continue;
@@ -149,7 +147,7 @@ public class Main {
                 }
 
                 filesService.sortedDataToFile(dataType.getStringList(), dataType.getIntegerList(), dataType.getFloatList(),
-                        FilesService.getRecordingMode(), prefix, customPathForSave);
+                        dataType.getRecordingMode(), prefix, customPathForSave);
 
                 if (statisticsShort) {
                     if (pathToBeginningFile != null) {
@@ -164,6 +162,8 @@ public class Main {
                     boolean resultF = false;
                     if (pathToBeginningFile != null) {
                         resultF = filesService.f(customPathForSave, ClassConstants.typeFilesArray, prefix);
+                    } else {
+                        log.error("Ошибка при попытке подсчитать расширенную статистику");
                     }
                 }
                 iterationCounter++;
@@ -172,3 +172,4 @@ public class Main {
         scanner.close();
     }
 }
+

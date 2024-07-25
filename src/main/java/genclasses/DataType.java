@@ -9,6 +9,7 @@ public class DataType {
     private static List<String> integerList = new LinkedList<>();
     private static List<String> floatList = new LinkedList<>();
     private static List<String> stringList = new LinkedList<>();
+    private static Integer recordingMode;
 
     public DataType() {
     }
@@ -41,5 +42,13 @@ public class DataType {
 
     public static void setStringList(List<String> stringList) {
         DataType.stringList = stringList;
+    }
+
+    public static Integer getRecordingMode() {
+        return recordingMode;
+    }
+
+    public static void setRecordingMode(Integer recordingMode) {
+        DataType.recordingMode = recordingMode;
     }
 }

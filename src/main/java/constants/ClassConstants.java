@@ -12,6 +12,7 @@ public class ClassConstants {
     public static final String regSearchInteger = "^(?!.*\\.\\d*)[+-]?\\d+$";
     public static final String regSearchString = "^(?!\\.)[а-яА-Яa-zA-Z]*\\.$|^[а-яА-Яa-zA-Z]+$";
     public static final String regLineBeginCommand = "^-([opasf])";
+    public static final String regLineBeginFileDirectory = "^[A-Za-z]:\\\\";
     public static final char moreSymbol = '>';
     public static final char lessSymbol = '<';
     public static final String[] typeFilesArray = {ClassConstants.strings, ClassConstants.integers, ClassConstants.floats};

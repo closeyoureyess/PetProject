@@ -24,7 +24,7 @@ public class SupportActionsNumbers {
         BigDecimal result = null;
         if (!listIntegerOrFloat.isEmpty()) {
             result = sumValueFloat(listIntegerOrFloat).divide(BigDecimal.valueOf(listIntegerOrFloat.size()),
-                    9, RoundingMode.HALF_UP);
+                    200, RoundingMode.HALF_UP);
         }
         return result;
     }
@@ -40,7 +40,6 @@ public class SupportActionsNumbers {
     public BigDecimal sumValueFloat(List<String> listFloat) {
         BigDecimal localFloat = BigDecimal.valueOf(0F);
         for (String number : listFloat) {
-            localFloat.add(new BigDecimal(number));
             localFloat = localFloat.add(new BigDecimal(number));
         }
         return localFloat;
@@ -68,17 +67,17 @@ public class SupportActionsNumbers {
             return null;
         }
         Optional<LineType> lineTypeObject = auxiliaryActions.iterationByElementsStringArray(listIntOrStr.getFirst());
-        List<Long> intList = new LinkedList<>();
+        List<BigInteger> intList = new LinkedList<>();
         if (lineTypeObject.get().getBigIntegerNumber() != null) {
-            for (String s : listIntOrStr){
-                intList.add(Long.valueOf(s));
-            }
+            intList = listIntOrStr.stream()
+                    .map(BigInteger::new)
+                    .toList();
         }
         if (!intList.isEmpty()) {
             if (symbolCompare == ClassConstants.lessSymbol) {
-                return BigInteger.valueOf(Collections.min(intList));
+                return Collections.min(intList);
             } else if (symbolCompare == ClassConstants.moreSymbol) {
-                return BigInteger.valueOf(Collections.max(intList));
+                return Collections.max(intList);
             }
         } else if (lineTypeObject.get().getStringLine() != null) {
             if (symbolCompare == ClassConstants.lessSymbol) {
