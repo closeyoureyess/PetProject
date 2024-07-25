@@ -146,8 +146,8 @@ public class Main implements CheckErrors {
                     continue;
                 }
 
-                filesService.sortedDataToFile(dataType.getStringList(), dataType.getIntegerList(), dataType.getFloatList(),
-                        dataType.getRecordingMode(), prefix, customPathForSave);
+                filesService.sortedDataToFile(dataType.getStringList(), dataType.getIntegerList(), dataType.getFloatList(), dataType.getRecordingMode(),
+                        prefix, customPathForSave);
 
                 if (statisticsShort) {
                     if (pathToBeginningFile != null) {
