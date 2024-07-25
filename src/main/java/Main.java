@@ -105,6 +105,8 @@ public class Main implements CheckErrors {
 
             while (!fifoFiles.isEmpty()) {
 
+                dataType.clearAllBufferCollection();
+
                 if (appendMode && overwriteMode && iterationCounter <= 0) {
                     appendMode = false;
                     log.info("Попытка выбрать режим добавления в существующий файл и указание нового пути для файла. " +
@@ -115,8 +117,6 @@ public class Main implements CheckErrors {
                     filesService.a(1);
                 }
 
-
-                dataType.clearAllBufferCollection();
                 pathToBeginningFile = fifoFiles.poll();
                 List<String> listWithText;
                 if (pathToBeginningFile != null) {
@@ -138,11 +138,6 @@ public class Main implements CheckErrors {
 
                 if (overwriteMode && customPathForSave == null) {
                     log.error("Кастомный путь указан некорректно");
-                    continue;
-                }
-
-                if (prefix == null) {
-                    log.error("Префикс для файла указан некорректно");
                     continue;
                 }
 

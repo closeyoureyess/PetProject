@@ -4,25 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ae75da64-d89e-4b9d-9d5b-07b8d40fda93" name="Changes" comment="master">
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="ae75da64-d89e-4b9d-9d5b-07b8d40fda93" name="Changes" comment="master - del redunancy elements">
       <change afterPath="$PROJECT_DIR$/src/main/resources/archetype-resources/src/main/java/App.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/resources/archetype-resources/src/test/java/AppTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/TrashClass.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/constants/CharConstants.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/constants/ClassConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/constants/ClassConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/constants/EscapeSequence.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/constants/SpaceSign.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/constants/StringConstants.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/constants/TypeDataFileConstants.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/constants/TypeFileConstants.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/DataType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/DataType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/FilesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/FilesService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/GeneralOperations.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/ReturnedObject.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/genclasses/SupportActionsNumbers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/genclasses/SupportActionsNumbers.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +41,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Main.executor": "Debug",
+    "Application.Main.executor": "Run",
     "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
     "Maven.MyTestTask3 [clean].executor": "Run",
     "Maven.MyTestTask3 [compile].executor": "Run",
@@ -134,7 +120,31 @@
       <option name="project" value="LOCAL" />
       <updated>1721889588377</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="master - final version">
+      <option name="closed" value="true" />
+      <created>1721927531976</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1721927531976</updated>
+    </task>
+    <task id="LOCAL-00008" summary="master - final version">
+      <option name="closed" value="true" />
+      <created>1721927597765</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1721927597765</updated>
+    </task>
+    <task id="LOCAL-00009" summary="master - del redunancy elements">
+      <option name="closed" value="true" />
+      <created>1721927809828</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1721927809828</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -154,7 +164,9 @@
     <MESSAGE value="master - #2pre-final stage" />
     <MESSAGE value="master - fixed bugs with duplicates in result txt" />
     <MESSAGE value="master" />
-    <option name="LAST_COMMIT_MESSAGE" value="master" />
+    <MESSAGE value="master - final version" />
+    <MESSAGE value="master - del redunancy elements" />
+    <option name="LAST_COMMIT_MESSAGE" value="master - del redunancy elements" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -162,7 +174,7 @@
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/Main.java</url>
           <line>21</line>
-          <option name="timeStamp" value="38" />
+          <option name="timeStamp" value="41" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -175,6 +187,8 @@
         <watch expression="input" />
         <watch expression="input" />
         <watch expression="listWithText" />
+        <watch expression="customPath" />
+        <watch expression="customPath" />
       </configuration>
     </watches-manager>
   </component>
